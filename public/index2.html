@@ -59,10 +59,15 @@
 
    var testValue = 0;
 
-   var visualize = [4];
+   var visualize = [0, 0, 0, 0];
 
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
-
+   var coordSpheres = [
+      -.34, 0., -5, .3,
+      -1., 0., -5., .3,
+      1., 0., -5., .3,
+      .34, 0., -5., .3,
+   ];
    var nSpheres = 4;
 
    var update = function() {
@@ -93,7 +98,7 @@
       normalize4(visualize);
       console.log(visualize);
 
-      var coordSpheres = 
+      coordSpheres = 
       [
          -.34, visualize[0], -5, .3,
          -1., visualize[1], -5., .3,
