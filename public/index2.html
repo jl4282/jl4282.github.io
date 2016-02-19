@@ -6,7 +6,7 @@
   <button onclick="document.getElementById('audioElement').pause()">Pause</button>
   <!-- <button onclick="document.getElementById('audioElement').volume+=0.1">Increase Volume</button>
   <button onclick="document.getElementById('audioElement').volume-=0.1">Decrease Volume</button> -->
-  <input id="range" type="range" name="Spheres" min="1" max="10">
+  <input id="range" type="range" value="10" name="Spheres" min="1" max="10">
 </div>
 <center>
 <td><canvas id='canvas1' width=400 height=400></canvas></td>
@@ -14,7 +14,6 @@
 </body>
 
 <script>
-   var nSpheres = document.getElementById('range').value;
    console.log('getting sphere number');
    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
    var audioElement = document.getElementById('audioElement');
@@ -76,7 +75,6 @@
       .9, .9, .9,
       .9, .9, .9
    ];
-   console.log('another change');
    var specular = 
    [
       .40, .34, .11,
@@ -110,7 +108,7 @@
       .8, 0., -5., .1,
       1., 0., -5., .1
    ];
-   var nSpheres = 10;
+   var nSpheres = document.getElementById('range').value;
 
    var update = function() {
 
@@ -136,7 +134,15 @@
          }
       }
       // specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
-      normalizeMany(visualize);
+      // normalizeMany(visualize); //get's messed up when less balls
+
+
+      for (var i = 0; i < visualize.length; i ++){
+         visualize[i] = visualize[i] / 128 - 1;
+      }
+
+      // for each number, divide by 128 then subtract by 1;
+
       // console.log("visualize", visualize);
 
       coordSpheres = 
