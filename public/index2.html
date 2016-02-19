@@ -61,7 +61,19 @@
    ];
 
    var ambient = [.1, .1, .1];
-   var diffuse = [.9, .9, .9];
+   var diffuse = 
+   [
+      .9, .9, .9,
+      .1, .1, .1,
+      .9, .9, .9,
+      .9, .9, .9,
+      .9, .9, .9,
+      .9, .9, .9,
+      .9, .9, .9,
+      .9, .9, .9,
+      .9, .9, .9,
+      .9, .9, .9,
+   ];
    var specular = [.40, .34, .11];
    var specPower = 1;
    // A TEST VARIABLE, JUST FOR PRACTICING DECLARING AND SETTING UNIFORM SHADER VARIABLES.
@@ -102,7 +114,7 @@
             sum = 0;
          }
       }
-      specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
+      // specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
       normalizeMany(visualize);
       // console.log("visualize", visualize);
 
@@ -123,7 +135,7 @@
       // console.log("single value", frequencyData[0]);
       // AT EACH ANIMATION FRAME, COMPUTE THE LIGHT DIRECTIONS.
 
-      var x = visualize[0];
+      var x = Math.sin(Math.PI * time);
 
       var lDir0 = [x,1,1];
       var lDir1 = [-1,-1,-1];
@@ -164,7 +176,7 @@
    uniform int   uNSpheres;
    uniform vec3  uLColor[20];// Color value of lights
    uniform vec3  uAmbient;   // Ambient color value
-   uniform vec3  uDiffuse;   // Diffuse color value
+   uniform vec3  uDiffuse[20];   // Diffuse color value
    uniform vec3  uSpecular;  // Specular color value
    uniform float uSpecP;     // Specular Power
 
@@ -223,7 +235,7 @@
             */
             vec3 E = -W;
             vec3 R = 2. * dot(normal, uLDir[i]) * normal - uLDir[i];
-            shade += uDiffuse * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular * max(0., pow(dot(E, R), uSpecP)) * uLColor[i];
+            shade += uDiffuse[i] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular * max(0., pow(dot(E, R), uSpecP)) * uLColor[i];
 
             /*
             OLD SHADER CODE
