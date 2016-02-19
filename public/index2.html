@@ -22,7 +22,7 @@
    // Bind our analyser to the media element source.
    audioSrc.connect(analyser);
    audioSrc.connect(audioCtx.destination);
-   var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+   var frequencyData = new Uint8Array(100);
 
    // IMPLEMENT A VECTOR NORMALIZE FUNCTION IN JAVASCRIPT.
 
@@ -63,10 +63,10 @@
    var nSpheres = 4;
    var coordSpheres = 
    [
-      -.3, 0.0, -5, .2,
-      -.7, 0.0, -5., .2,
-      .7, 0.0, -5., .2,
-      .3, 0.0, -5., .2,
+      -.34, 0.0, -5, .3,
+      -1., 0.0, -5., .3,
+      1., 0.0, -5., .3,
+      .34, 0.0, -5., .3,
    ];
 
    var update = function() {
@@ -77,19 +77,19 @@
       var sum = 0;
       for (var i = 0; i < frequencyData.length; i++){
          sum += frequencyData[i];
-         if (i === 255){
+         if (i === 24){
             visualize1 = sum / 256;
             sum = 0;
          }
-         else if (i === 511){
+         else if (i === 49){
             visualize2 = sum / 256;
             sum = 0;
          }
-         else if (i === 768){
+         else if (i === 74){
             visualize3 = sum / 256;
             sum = 0;
          }
-         else if (i === 1023){
+         else if (i === 99){
             visualize4 = sum / 256;
             sum = 0;
          }
