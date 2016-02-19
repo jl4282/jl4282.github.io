@@ -32,6 +32,12 @@
          vec[i] /= norm;
    }
 
+   function normalize4(vec){
+      var norm = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2] + vec[3] * vec[3]);
+      for (var i = 0 ; i < 4 ; i++)
+         vec[i] /= norm;
+   }
+
    // SPECIFY HOW MANY LIGHT SOURCES FOR THE FRAGMENT SHADER TO LOOP THROUGH.
 
    var nLights = 2;
@@ -91,7 +97,7 @@
             sum = 0;
          }
       }
-      console.log(normalize(visualize));
+      console.log(normalize4(visualize));
 
       // console.log("single value", frequencyData[0]);
       // AT EACH ANIMATION FRAME, COMPUTE THE LIGHT DIRECTIONS.
