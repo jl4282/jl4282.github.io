@@ -14,7 +14,8 @@
 </body>
 
 <script>
-   // var nSpheres = document.getElementById('range').value;
+   var nSpheres = document.getElementById('range').value;
+   console.log('getting sphere number');
    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
    var audioElement = document.getElementById('audioElement');
    var audioSrc = audioCtx.createMediaElementSource(audioElement);
