@@ -64,13 +64,6 @@
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
 
    var nSpheres = 4;
-   var coordSpheres = 
-   [
-      -.34, 0.0, -5, .3,
-      -1., 0.0, -5., .3,
-      1., 0.0, -5., .3,
-      .34, 0.0, -5., .3,
-   ];
 
    var update = function() {
 
@@ -99,6 +92,14 @@
       }
       normalize4(visualize);
       console.log(visualize);
+
+      var coordSpheres = 
+      [
+         -.34, visualize[0], -5, .3,
+         -1., visualize[1], -5., .3,
+         1., visualize[2], -5., .3,
+         .34, visualize[3], -5., .3,
+      ];
 
       // console.log("single value", frequencyData[0]);
       // AT EACH ANIMATION FRAME, COMPUTE THE LIGHT DIRECTIONS.
