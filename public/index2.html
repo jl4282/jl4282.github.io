@@ -22,7 +22,7 @@
    // Bind our analyser to the media element source.
    audioSrc.connect(analyser);
    audioSrc.connect(audioCtx.destination);
-   var frequencyData = new Uint8Array(200);
+   var frequencyData = new Uint8Array(analyser.frequencyBinCount);
 
    // IMPLEMENT A VECTOR NORMALIZE FUNCTION IN JAVASCRIPT.
 
@@ -53,6 +53,11 @@
 
    var testValue = 0;
 
+   var visualize1 = 0;
+   var visualize2 = 0;
+   var visualize3 = 0;
+   var visualize4 = 0;
+
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
 
    var nSpheres = 2;
@@ -66,7 +71,26 @@
 
       analyser.getByteFrequencyData(frequencyData);
 
-      console.log("single value", frequencyData[0]);
+      //get 4 values corresponding to 256 numbers in the array
+      var sum = 0;
+      for (var i = 0; i < frequencyData.length; i++){
+         sum += frequencyData[i];
+         if (i === 255){
+            visualize1 = sum / 256;
+         }
+         else if (i === 511){
+            visualize2 = sum / 256;
+         }
+         else if (i === 768){
+            visualize3 = sum / 256;
+         }
+         else if (i === 1023){
+            visualize4 = sum / 256;
+         }
+      }
+      console.log(visualize1, visualize2, visualize3, visualize4);
+
+      // console.log("single value", frequencyData[0]);
       // AT EACH ANIMATION FRAME, COMPUTE THE LIGHT DIRECTIONS.
 
       var x = Math.sin(Math.PI * time);
