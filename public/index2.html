@@ -6,6 +6,7 @@
   <button onclick="document.getElementById('audioElement').pause()">Pause</button>
   <!-- <button onclick="document.getElementById('audioElement').volume+=0.1">Increase Volume</button>
   <button onclick="document.getElementById('audioElement').volume-=0.1">Decrease Volume</button> -->
+  <input id="range" type="range" name="Spheres" min="1" max="10">
 </div>
 <center>
 <td><canvas id='canvas1' width=400 height=400></canvas></td>
@@ -13,7 +14,7 @@
 </body>
 
 <script>
-
+   // var nSpheres = document.getElementById('range').value;
    var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
    var audioElement = document.getElementById('audioElement');
    var audioSrc = audioCtx.createMediaElementSource(audioElement);
@@ -97,22 +98,28 @@
 
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
    var coordSpheres = [
-      -1.5, 0., -5, .15,
-      -.85, 0., -5., .15,
-      -.65, 0., -5., .15,
-      -.45, 0., -5., .15,
-      -.25, 0., -5, .15,
-      .25, 0., -5., .15,
-      .45, 0., -5., .15,
-      .65, 0., -5., .15,
-      .85, 0., -5., .15,
-      1.5, 0., -5., .15
+      -1., 0., -5, .1,
+      -.8, 0., -5., .1,
+      -.6, 0., -5., .1,
+      -.4, 0., -5., .1,
+      -.2, 0., -5, .1,
+      .2, 0., -5., .1,
+      .4, 0., -5., .1,
+      .6, 0., -5., .1,
+      .8, 0., -5., .1,
+      1., 0., -5., .1
    ];
    var nSpheres = 10;
 
    var update = function() {
 
       analyser.getByteFrequencyData(frequencyData);
+
+
+      var s = document.getElementById('range').value;
+      if (nSpheres !== s){
+         nSpheres = s;
+      }
 
       //get 4 values corresponding to 256 numbers in the array
       var sum = 0;
