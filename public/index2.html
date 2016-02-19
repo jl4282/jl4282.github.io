@@ -77,15 +77,19 @@
          sum += frequencyData[i];
          if (i === 255){
             visualize1 = sum / 256;
+            sum = 0;
          }
          else if (i === 511){
             visualize2 = sum / 256;
+            sum = 0;
          }
          else if (i === 768){
             visualize3 = sum / 256;
+            sum = 0;
          }
          else if (i === 1023){
             visualize4 = sum / 256;
+            sum = 0;
          }
       }
       console.log(visualize1, visualize2, visualize3, visualize4);
