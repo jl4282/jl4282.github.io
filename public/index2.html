@@ -72,23 +72,23 @@
       .9, .9, .9,
       .9, .9, .9,
       .9, .9, .9,
-      .9, .9, .9,
+      .9, .9, .9
    ];
    console.log('spec set');
    var specular = 
    [
       .40, .34, .11,
       .10, .14, .11,
+      .90, .84, .41,
       .40, .34, .11,
       .40, .34, .11,
       .40, .34, .11,
       .40, .34, .11,
       .40, .34, .11,
       .40, .34, .11,
-      .40, .34, .11,
-      .40, .34, .11,
+      .40, .34, .11
    ];
-   var specPower = [1, 2, 1, .5, 1, 1, 1, 1, 1, 1];
+   var specPower = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
    // A TEST VARIABLE, JUST FOR PRACTICING DECLARING AND SETTING UNIFORM SHADER VARIABLES.
 
    var testValue = 0;
@@ -106,7 +106,7 @@
       .4, 0., -5., .1,
       .6, 0., -5., .1,
       .8, 0., -5., .1,
-      1., 0., -5., .1,
+      1., 0., -5., .1
    ];
    var nSpheres = 10;
 
@@ -292,7 +292,7 @@
       if (t < 10000.)
          color = shadeSphere(V + t * W, nearSphere, W);
 
-      color.r *= uTest; // SEE WHETHER TEST VALUE HAS BEEN PASSED CORRECTLY TO THE FRAGMENT SHADER.
+      // color.r *= uTest; // SEE WHETHER TEST VALUE HAS BEEN PASSED CORRECTLY TO THE FRAGMENT SHADER.
 
       color = sqrt(color);                   // DO GAMMA CORRECTION.
 
