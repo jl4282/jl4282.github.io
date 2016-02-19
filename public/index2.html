@@ -59,16 +59,22 @@
 
    var testValue = 0;
 
-   var visualize = [0, 0, 0, 0];
+   var visualize = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
    var coordSpheres = [
-      -.34, 0., -5, .3,
-      -1., 0., -5., .3,
-      1., 0., -5., .3,
-      .34, 0., -5., .3,
+      -1., 0., -5, .1,
+      -.8, 0., -5., .1,
+      -.6, 0., -5., .1,
+      -.4, 0., -5., .1,
+      -.2, 0., -5, .1,
+      .2, 0., -5., .1,
+      .4, 0., -5., .1,
+      .6, 0., -5., .1,
+      .8, 0., -5., .1,
+      1., 0., -5., .1,
    ];
-   var nSpheres = 4;
+   var nSpheres = 10;
 
    var update = function() {
 
@@ -78,20 +84,8 @@
       var sum = 0;
       for (var i = 0; i < frequencyData.length; i++){
          sum += frequencyData[i];
-         if (i === 24){
-            visualize[0] = sum / (frequencyData.length / 4) ;
-            sum = 0;
-         }
-         else if (i === 49){
-            visualize[1] = sum / (frequencyData.length / 4);
-            sum = 0;
-         }
-         else if (i === 74){
-            visualize[2] = sum / (frequencyData.length / 4);
-            sum = 0;
-         }
-         else if (i === 99){
-            visualize[3] = sum / (frequencyData.length / 4);
+         if (i % 10 === 0){
+            visualize[i/10] = sum / (frequencyData.length / nSpheres);
             sum = 0;
          }
       }
