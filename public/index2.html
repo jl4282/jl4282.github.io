@@ -36,6 +36,17 @@
          vec[i] /= norm;
    }
 
+   function normalizeMany(vec){
+      sum = 0;
+      for (var i = 0; i < vec.length; i++){
+         sum += vec[i] * vec[i];
+      }
+      norm = Math.sqrt(sum);
+      for (var i = 0; i < vec.length; i++){
+         vec[i] /= norm;
+      }
+   }
+
    // SPECIFY HOW MANY LIGHT SOURCES FOR THE FRAGMENT SHADER TO LOOP THROUGH.
 
    var nLights = 2;
@@ -92,7 +103,7 @@
          }
       }
       specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
-      normalize4(visualize);
+      normalizeMany(visualize);
       console.log("specular", visualize);
 
       coordSpheres = 
