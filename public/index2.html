@@ -53,10 +53,7 @@
 
    var testValue = 0;
 
-   var visualize1 = 0;
-   var visualize2 = 0;
-   var visualize3 = 0;
-   var visualize4 = 0;
+   var visualize = [4];
 
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
 
@@ -78,23 +75,23 @@
       for (var i = 0; i < frequencyData.length; i++){
          sum += frequencyData[i];
          if (i === 24){
-            visualize1 = sum / 256;
+            visualize[0] = sum / (frequencyData.length / 4) ;
             sum = 0;
          }
          else if (i === 49){
-            visualize2 = sum / 256;
+            visualize[1] = sum / (frequencyData.length / 4);
             sum = 0;
          }
          else if (i === 74){
-            visualize3 = sum / 256;
+            visualize[2] = sum / (frequencyData.length / 4);
             sum = 0;
          }
          else if (i === 99){
-            visualize4 = sum / 256;
+            visualize[3] = sum / (frequencyData.length / 4);
             sum = 0;
          }
       }
-      console.log(visualize1, visualize2, visualize3, visualize4);
+      console.log(normalize(visualize));
 
       // console.log("single value", frequencyData[0]);
       // AT EACH ANIMATION FRAME, COMPUTE THE LIGHT DIRECTIONS.
