@@ -75,8 +75,20 @@
       .9, .9, .9,
    ];
    console.log('spec reset');
-   var specular = [.40, .34, .11];
-   var specPower = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+   var specular = 
+   [
+      .40, .34, .11,
+      .10, .14, .11,
+      .40, .34, .11,
+      .40, .34, .11,
+      .40, .34, .11,
+      .40, .34, .11,
+      .40, .34, .11,
+      .40, .34, .11,
+      .40, .34, .11,
+      .40, .34, .11,
+   ];
+   var specPower = [1, 2, 1, .5, 1, 1, 1, 1, 1, 1];
    // A TEST VARIABLE, JUST FOR PRACTICING DECLARING AND SETTING UNIFORM SHADER VARIABLES.
 
    var testValue = 0;
@@ -178,7 +190,7 @@
    uniform vec3  uLColor[20];// Color value of lights
    uniform vec3  uAmbient;   // Ambient color value
    uniform vec3  uDiffuse[20];   // Diffuse color value
-   uniform vec3  uSpecular;  // Specular color value
+   uniform vec3  uSpecular[20];  // Specular color value
    uniform float uSpecP[20];     // Specular Power
 
    varying vec3  vPosition;
@@ -236,7 +248,7 @@
             */
             vec3 E = -W;
             vec3 R = 2. * dot(normal, uLDir[i]) * normal - uLDir[i];
-            shade += uDiffuse[i] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular * max(0., pow(dot(E, R), uSpecP[i])) * uLColor[i];
+            shade += uDiffuse[i] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[i] * max(0., pow(dot(E, R), uSpecP[i])) * uLColor[i];
 
             /*
             OLD SHADER CODE
