@@ -18,8 +18,6 @@
    var audioElement = document.getElementById('audioElement');
    var audioSrc = audioCtx.createMediaElementSource(audioElement);
    var analyser = audioCtx.createAnalyser();
-
-   // Bind our analyser to the media element source.
    audioSrc.connect(analyser);
    audioSrc.connect(audioCtx.destination);
    var frequencyData = new Uint8Array(100);
@@ -85,7 +83,11 @@
       for (var i = 0; i < frequencyData.length; i++){
          sum += frequencyData[i];
          if (i % 10 === 0){
-            visualize[i/10] = sum / (frequencyData.length / nSpheres);
+            visualize[i / 10 - 1] = sum / (frequencyData.length / nSpheres);
+            sum = 0;
+         }
+         else if (i === frequencyData.length - 1){
+            visualize[nSpheres - 1] = sum / (frequencyData.length / nSpheres);
             sum = 0;
          }
       }
@@ -95,10 +97,16 @@
 
       coordSpheres = 
       [
-         -.34, visualize[0] * 2 - 1, -5, .3,
-         -1., visualize[1] * 2 - 1 , -5., .3,
-         1., visualize[2] * 2 - 1, -5., .3,
-         .34, visualize[3] * 2 - 1, -5., .3,
+         -1., visualize[0], -5, .1,
+         -.8, visualize[1], -5., .1,
+         -.6, visualize[2], -5., .1,
+         -.4, visualize[3], -5., .1,
+         -.2, visualize[4], -5, .1,
+         .2, visualize[5], -5., .1,
+         .4, visualize[6], -5., .1,
+         .6, visualize[7], -5., .1,
+         .8, visualize[8], -5., .1,
+         1., visualize[9], -5., .1,
       ];
 
       // console.log("single value", frequencyData[0]);
