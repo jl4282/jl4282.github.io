@@ -96,6 +96,7 @@
    var visualize = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
+
    var coordSpheres = [
       -1., 0., -5, .1,
       -.8, 0., -5., .1,
@@ -140,25 +141,36 @@
       for (var i = 0; i < visualize.length; i ++){
          visualize[i] = visualize[i] / 128 - 1;
       }
+      coordSpheres = [];
+      for (var i = 0; i < nSpheres; i++){
+         var x, y, z, r;
+         x = 2 / (nSpheres) * (i) - 1; //won't work -> spheres are disapearing around 1  2 3 = nSpheres
+         y = visualize[i];
+         z = -5.;
+         r = Math.abs(2 / nSpheres / 2); //does not scale to fewer spheres
+         
+         coordSpheres.push(x, y, z, r);
+      }
+      console.log(coordSpheres);
 
       // for each number, divide by 128 then subtract by 1;
 
       // console.log("visualize", visualize);
 
-      coordSpheres = 
-      [
-         -1., visualize[0], -5, .1,
-         -.8, visualize[1], -5., .1,
-         -.6, visualize[2], -5., .1,
-         -.4, visualize[3], -5., .1,
-         -.2, visualize[4], -5, .1,
-         .2, visualize[5], -5., .1,
-         .4, visualize[6], -5., .1,
-         .6, visualize[7], -5., .1,
-         .8, visualize[8], -5., .1,
-         1., visualize[9], -5., .1,
-      ];
-      
+      // coordSpheres = 
+      // [
+      //    -1., visualize[0], -5, .1,
+      //    -.8, visualize[1], -5., .1,
+      //    -.6, visualize[2], -5., .1,
+      //    -.4, visualize[3], -5., .1,
+      //    -.2, visualize[4], -5, .1,
+      //    .2, visualize[5], -5., .1,
+      //    .4, visualize[6], -5., .1,
+      //    .6, visualize[7], -5., .1,
+      //    .8, visualize[8], -5., .1,
+      //    1., visualize[9], -5., .1,
+      // ];
+
       // AT EACH ANIMATION FRAME, COMPUTE THE LIGHT DIRECTIONS.
 
       var x = Math.sin(Math.PI * time);
