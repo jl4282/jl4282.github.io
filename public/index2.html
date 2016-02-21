@@ -120,6 +120,9 @@
 
       nSpheres = document.getElementById('range').value;
 
+      var specR, specG, specB = 0;
+      specular = [];
+
       //get 4 values corresponding to 256 numbers in the array
       var sum = 0;
       for (var i = 0; i < frequencyData.length; i++){
@@ -127,13 +130,16 @@
          if (i % 10 === 0){
             visualize[i / 10 - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
+            specB = frequencyData[i] / 255;
+            specular.push(specR, specG, specB);
          }
          else if (i === frequencyData.length - 1){
             visualize[nSpheres - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
          }
       }
-      specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
+
+      // specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
       // normalizeMany(visualize); //get's messed up when less balls
 
 
