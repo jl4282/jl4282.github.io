@@ -3,6 +3,9 @@
 <audio id="audioElement" src="./audio/Odesza-Above-The-Middle.mp3"></audio>
 <div>
    <p style="color:white;">Please make sure your speakers are on.</p>
+   <input type="radio" name="song" value="Odesza-Above-The-Middle.mp3">Odesza: Above The Middle<br>
+   <input type="radio" name="song" value="Kasger-You-And-Me.mp3">Kasger: You and Me<br>
+   <input type="radio" name="song" value="trance.mp3">Trance?<br>
    <button onclick="document.getElementById('audioElement').play()">Play</button>
    <button onclick="document.getElementById('audioElement').pause()">Pause</button>
    <!-- <button onclick="document.getElementById('audioElement').volume+=0.1">Increase Volume</button>
@@ -114,6 +117,15 @@
    var maxSpheres = document.getElementById('range').max;
 
    var update = function() {
+
+      if (audioElement.src !== document.getElementById('audioElement').src){
+         audioElement.src = "./audio/" + document.getElementById('audioElement').src;
+         audioSrc = audioCtx.createMediaElementSource(audioElement);
+         analyser = audioCtx.createAnalyser();
+         audioSrc.connect(analyser);
+         audioSrc.connect(audioCtx.destination);
+      }
+
 
       analyser.getByteFrequencyData(frequencyData);
 
