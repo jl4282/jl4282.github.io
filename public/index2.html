@@ -122,7 +122,7 @@
 
       // console.log('source: ', document.getElementById('form').song.value);
 
-      if (audioElement.src !== ("./audio/" + document.getElementById('form').song.value)){
+      if (audioElement.src.search(document.getElementById('form').song.value) >= 0){
          console.log('changing src?');
          audioElement.src = "./audio/" + document.getElementById('form').song.value;
          audioElement.pause();
