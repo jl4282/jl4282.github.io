@@ -123,6 +123,7 @@
       // console.log('source: ', document.getElementById('form').song.value);
 
       if (audioElement.src !== ("./audio/" + document.getElementById('form').song.value)){
+         console.log('changing src?');
          audioElement.src = "./audio/" + document.getElementById('form').song.value;
          audioElement.pause();
          audioElement.load();
