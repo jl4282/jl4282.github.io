@@ -120,7 +120,7 @@
 
       nSpheres = document.getElementById('range').value;
 
-      var specR, specG, specB = 0;
+      // var specR, specG, specB = 0;
       specular = [];
 
       //get 4 values corresponding to 256 numbers in the array
@@ -130,7 +130,8 @@
          if (i % 10 === 0){
             visualize[i / 10 - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
-            specB = frequencyData[i] / 255;
+            var specR = visualize[i];
+            var specG = specB = frequencyData[i] / 255;
             specular.push(specR, specG, specB);
          }
          else if (i === frequencyData.length - 1){
