@@ -111,26 +111,25 @@
    ];
    var nSpheres = document.getElementById('range').value;
 
+   var maxSpheres = document.getElementById('range').max;
+
    var update = function() {
 
       analyser.getByteFrequencyData(frequencyData);
 
 
-      var s = document.getElementById('range').value;
-      if (nSpheres !== s){
-         nSpheres = s;
-      }
+      nSpheres = document.getElementById('range').value;
 
       //get 4 values corresponding to 256 numbers in the array
       var sum = 0;
       for (var i = 0; i < frequencyData.length; i++){
          sum += frequencyData[i];
          if (i % 10 === 0){
-            visualize[i / 10 - 1] = sum / (frequencyData.length / nSpheres);
+            visualize[i / 10 - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
          }
          else if (i === frequencyData.length - 1){
-            visualize[nSpheres - 1] = sum / (frequencyData.length / nSpheres);
+            visualize[nSpheres - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
          }
       }
