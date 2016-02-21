@@ -133,7 +133,7 @@
             sum = 0;
          }
       }
-      // specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
+      specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
       // normalizeMany(visualize); //get's messed up when less balls
 
 
@@ -146,12 +146,12 @@
          x = 2 / (nSpheres) * (i) - 1; //won't work -> spheres are disapearing around 1  2 3 = nSpheres
          y = visualize[i];
          z = -5.;
-         // r = Math.abs(2 / nSpheres / 2); //does not scale to fewer spheres
-         r = .1;
+         r = Math.abs(2 / nSpheres / 2); //does not scale to fewer spheres
+         // r = .1;
          
          coordSpheres.push(x, y, z, r);
       }
-      console.log(coordSpheres);
+      // console.log(coordSpheres);
 
       // for each number, divide by 128 then subtract by 1;
 
