@@ -124,6 +124,9 @@
 
       if (audioElement.src !== ("./audio/" + document.getElementById('form').song.value)){
          audioElement.src = "./audio/" + document.getElementById('form').song.value;
+         audioElement.pause();
+         audioElement.load();
+         audioElement.play();
          // audioSrc = audioCtx.createMediaElementSource(audioElement);
          // analyser = audioCtx.createAnalyser();
          // audioSrc.connect(analyser);
