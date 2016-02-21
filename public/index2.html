@@ -180,7 +180,8 @@
 
       // AT EACH ANIMATION FRAME, COMPUTE THE LIGHT DIRECTIONS.
 
-      var x = Math.sin(Math.PI * time);
+      // var x = Math.sin(Math.PI * time);
+      var x = visualize[0]; 
 
       var lDir0 = [x,1,1];
       var lDir1 = [-1,-1,-1];
@@ -251,7 +252,7 @@
 
    // YOU NEED TO CHANGE THIS TO USE THE PHONG SHADING ALGORITHM.
 
-   vec3 shadeSphere(vec3 point, vec4 sphere, vec3 W) {
+   vec3 shadeSphere(vec3 point, vec4 sphere, vec3 W/*, int sphereNum*/) {
       vec3 normal = (point - sphere.xyz) / sphere.w;
       vec3 shade = uAmbient;
       // vec3 specular = vec3(.40, .34, .11);
