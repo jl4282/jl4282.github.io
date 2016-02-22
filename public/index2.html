@@ -10,8 +10,6 @@
    </form>
    <button onclick="document.getElementById('audioElement').play()">Play</button>
    <button onclick="document.getElementById('audioElement').pause()">Pause</button>
-   <!-- <button onclick="document.getElementById('audioElement').volume+=0.1">Increase Volume</button>
-   <button onclick="document.getElementById('audioElement').volume-=0.1">Decrease Volume</button> -->
    <br>Number of Balls: <input id="range" type="range" value="10" name="Spheres" min="1" max="10">
 </div>
 <center>
@@ -36,23 +34,6 @@
          vec[i] /= norm;
    }
 
-   // function normalize4(vec){
-   //    var norm = Math.sqrt(vec[0] * vec[0] + vec[1] * vec[1] + vec[2] * vec[2] + vec[3] * vec[3]);
-   //    for (var i = 0 ; i < 4 ; i++)
-   //       vec[i] /= norm;
-   // }
-
-   // function normalizeMany(vec){
-   //    sum = 0;
-   //    for (var i = 0; i < vec.length; i++){
-   //       sum += vec[i] * vec[i];
-   //    }
-   //    norm = Math.sqrt(sum);
-   //    for (var i = 0; i < vec.length; i++){
-   //       vec[i] /= norm;
-   //    }
-   // }
-
    // SPECIFY HOW MANY LIGHT SOURCES FOR THE FRAGMENT SHADER TO LOOP THROUGH.
 
    var nLights = 2;
@@ -66,7 +47,7 @@
       .15, .15, .06
    ];
 
-   var ambient = [.1, .1, .1];
+   var ambient = [.3, .5, .9];
    var diffuse = 
    [
       .9, .9, .9,
@@ -80,19 +61,19 @@
       .9, .9, .9,
       .9, .9, .9
    ];
-   var specular = 
-   [
-      .40, .34, .11,
-      .10, .14, .11,
-      .90, .84, .41,
-      .40, .34, .11,
-      .40, .34, .11,
-      .40, .34, .11,
-      .40, .34, .11,
-      .40, .34, .11,
-      .40, .34, .11,
-      .40, .34, .11
-   ];
+   // var specular = 
+   // [
+   //    .10, .9, .5,
+   //    .10, .9, .5,
+   //    .90, .84, .41,
+   //    .40, .34, .11,
+   //    .40, .34, .11,
+   //    .40, .34, .11,
+   //    .40, .34, .11,
+   //    .40, .34, .11,
+   //    .40, .34, .11,
+   //    .40, .34, .11
+   // ];
    var specPower = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
    // A TEST VARIABLE, JUST FOR PRACTICING DECLARING AND SETTING UNIFORM SHADER VARIABLES.
 
@@ -102,18 +83,18 @@
 
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
 
-   var coordSpheres = [
-      -1., 0., -5, .1,
-      -.8, 0., -5., .1,
-      -.6, 0., -5., .1,
-      -.4, 0., -5., .1,
-      -.2, 0., -5, .1,
-      .2, 0., -5., .1,
-      .4, 0., -5., .1,
-      .6, 0., -5., .1,
-      .8, 0., -5., .1,
-      1., 0., -5., .1
-   ];
+   // var coordSpheres = [
+   //    -1., 0., -5, .1,
+   //    -.8, 0., -5., .1,
+   //    -.6, 0., -5., .1,
+   //    -.4, 0., -5., .1,
+   //    -.2, 0., -5, .1,
+   //    .2, 0., -5., .1,
+   //    .4, 0., -5., .1,
+   //    .6, 0., -5., .1,
+   //    .8, 0., -5., .1,
+   //    1., 0., -5., .1
+   // ];
    var nSpheres = document.getElementById('range').value;
 
    var maxSpheres = document.getElementById('range').max;
@@ -127,17 +108,10 @@
          audioElement.src = "./audio/" + document.getElementById('form').song.value;
          audioElement.pause();
          audioElement.load();
-
-
-         // audioSrc = audioCtx.createMediaElementSource(audioElement);
-         // analyser = audioCtx.createAnalyser();
-         // audioSrc.connect(analyser);
-         // audioSrc.connect(audioCtx.destination);
       }
 
 
       analyser.getByteFrequencyData(frequencyData);
-
 
       nSpheres = document.getElementById('range').value;
 
@@ -180,29 +154,9 @@
          
          coordSpheres.push(x, y, z, r);
       }
-      // console.log(coordSpheres);
-
-      // for each number, divide by 128 then subtract by 1;
-
-      // console.log("visualize", visualize);
-
-      // coordSpheres = 
-      // [
-      //    -1., visualize[0], -5, .1,
-      //    -.8, visualize[1], -5., .1,
-      //    -.6, visualize[2], -5., .1,
-      //    -.4, visualize[3], -5., .1,
-      //    -.2, visualize[4], -5, .1,
-      //    .2, visualize[5], -5., .1,
-      //    .4, visualize[6], -5., .1,
-      //    .6, visualize[7], -5., .1,
-      //    .8, visualize[8], -5., .1,
-      //    1., visualize[9], -5., .1,
-      // ];
-
+      
       // AT EACH ANIMATION FRAME, COMPUTE THE LIGHT DIRECTIONS.
 
-      // var x = Math.sin(Math.PI * time);
       var x = visualize[0]; 
 
       var lDir0 = [x,1,1];
@@ -274,7 +228,8 @@
 
    // YOU NEED TO CHANGE THIS TO USE THE PHONG SHADING ALGORITHM.
 
-   vec3 shadeSphere(vec3 point, vec4 sphere, vec3 W/*, int sphereNum*/) {
+   vec3 shadeSphere(vec3 point, vec4 sphere, vec3 W, int sphereNum) {
+      int num;
       vec3 normal = (point - sphere.xyz) / sphere.w;
       vec3 shade = uAmbient;
       // vec3 specular = vec3(.40, .34, .11);
@@ -290,7 +245,42 @@
             */
             vec3 E = -W;
             vec3 R = 2. * dot(normal, uLDir[i]) * normal - uLDir[i];
-            shade += uDiffuse[i] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[i] * max(0., pow(dot(E, R), uSpecP[i])) * uLColor[i];
+
+            //need to either hardcode uDiffuse i or make it work somehow. Right now it's changing for each light, not for each sphere.
+
+            if (sphereNum == 0){
+               shade += uDiffuse[0] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[0] * max(0., pow(dot(E, R), uSpecP[0])) * uLColor[i];
+            }
+            else if (sphereNum == 1){
+               shade += uDiffuse[1] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[1] * max(0., pow(dot(E, R), uSpecP[1])) * uLColor[i];
+            }
+            else if (sphereNum == 2){
+               shade += uDiffuse[2] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[2] * max(0., pow(dot(E, R), uSpecP[2])) * uLColor[i];
+            }
+            else if (sphereNum == 3){
+               shade += uDiffuse[3] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[3] * max(0., pow(dot(E, R), uSpecP[3])) * uLColor[i];
+            }
+            else if (sphereNum == 4){
+               shade += uDiffuse[4] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[4] * max(0., pow(dot(E, R), uSpecP[4])) * uLColor[i];
+            }
+            else if (sphereNum == 5){
+               shade += uDiffuse[5] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[5] * max(0., pow(dot(E, R), uSpecP[5])) * uLColor[i];
+            }
+            else if (sphereNum == 6){
+               shade += uDiffuse[6] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[6] * max(0., pow(dot(E, R), uSpecP[6])) * uLColor[i];
+            }
+            else if (sphereNum == 7){
+               shade += uDiffuse[7] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[7] * max(0., pow(dot(E, R), uSpecP[7])) * uLColor[i];
+            }
+            else if (sphereNum == 8){
+               shade += uDiffuse[8] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[8] * max(0., pow(dot(E, R), uSpecP[8])) * uLColor[i];
+            }
+            else if (sphereNum == 9){
+               shade += uDiffuse[9] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[9] * max(0., pow(dot(E, R), uSpecP[9])) * uLColor[i];
+            }
+            else if (sphereNum == 10){
+               shade += uDiffuse[10] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[10] * max(0., pow(dot(E, R), uSpecP[10])) * uLColor[i];
+            }
 
             /*
             OLD SHADER CODE
@@ -299,6 +289,13 @@
          }
       }
       return shade;
+   }
+
+   vec3 callShadeSphere(vec3 V, float t, vec3 W, vec4 nearSphere, int nearSphereNum){
+      vec3 shade = vec3(.05, .05, .05);
+      if (t < 10000.)
+         shade = shadeSphere(V + t * W, nearSphere, W, nearSphereNum);
+      return shade; 
    }
 
    void main(void) {
@@ -317,17 +314,18 @@
             if (temp < t){
                t = temp;
                nearSphere = uSpheres[i];
+               color = callShadeSphere(V, t, W, nearSphere, i);
             }
          }
       }
-      if (t < 10000.)
-         color = shadeSphere(V + t * W, nearSphere, W);
+      
 
-      // color.r *= uTest; // SEE WHETHER TEST VALUE HAS BEEN PASSED CORRECTLY TO THE FRAGMENT SHADER.
-
+      // color.r *= uSpecular[1]; // SEE WHETHER TEST VALUE HAS BEEN PASSED CORRECTLY TO THE FRAGMENT SHADER.
+      
       color = sqrt(color);                   // DO GAMMA CORRECTION.
 
       gl_FragColor = vec4(color, 1.);        // SET OPACITY TO 1.
+      
    }
 </script>
 
