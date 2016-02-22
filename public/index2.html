@@ -138,9 +138,9 @@
                specular.push(specR, specG, specB);
                ambient.push(specG, specB, specR);
             }
-            console.log(i);
-            console.log('specular: ', specular[0], specular[1] );
-            console.log('ambient: ', ambient[0], ambient[1]);
+            // console.log(i);
+            // console.log('specular: ', specular[0], specular[1] );
+            // console.log('ambient: ', ambient[0], ambient[1]);
          }
          
          else if (i === frequencyData.length - 1){ //capturing the last one
@@ -258,13 +258,13 @@
          shade = uAmbient[0];
       }
       else if (sphereNum == 1){
-         shade = uAmbient[1];
+         shade = uAmbient[0];
       }
       else if (sphereNum == 2){
-         shade = uAmbient[2];
+         shade = uAmbient[0];
       }
       else if (sphereNum == 3){
-         shade = uAmbient[3];
+         shade = uAmbient[0];
       }
       else if (sphereNum == 4){
          shade = uAmbient[4];
