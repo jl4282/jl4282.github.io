@@ -152,7 +152,8 @@
             visualize[i / 10 - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
             var specR = visualize[i];
-            var specG = specB = frequencyData[i] / 255;
+            var specG = frequencyData[i] / 255 / 2;
+            var specB = frequencyData[i] / 255;
             specular.push(specR, specG, specB);
          }
          else if (i === frequencyData.length - 1){
