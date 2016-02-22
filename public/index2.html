@@ -140,7 +140,7 @@
          }
          lColorValues = 
          [
-            (frequencyData[0]/255 + frequencyData[49]/255) / 2, .6, 1.,
+            (frequencyData[0]/255 + frequencyData[49]/255) / 2, Math.max(1 - (frequencyData[0]/255 + frequencyData[49]/255) / 2, 0), 1.,
             .15, .15, .06
          ];
 
