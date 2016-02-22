@@ -84,7 +84,6 @@
       visualize.push(0); //initializing visualize? Do i even need to to that here?
       ambient.push(generateRand() , generateRand(), generateRand());
    }
-   console.log(ambient);
    // A TEST VARIABLE, JUST FOR PRACTICING DECLARING AND SETTING UNIFORM SHADER VARIABLES.
 
    var testValue = 0;
@@ -118,6 +117,7 @@
 
       //get 4 values corresponding to 256 numbers in the array
       var sum = 0;
+      ambient = [];
       for (var i = 0; i < frequencyData.length; i++){
          sum += frequencyData[i];
          if (i % 10 === 0){
@@ -129,12 +129,14 @@
                var specG = frequencyData[i] / 255 / 2;
                var specB = frequencyData[i] / 255;
                specular.push(specR, specG, specB);
+               ambient.push(specG, specB, specR);
             }
             else {
                var specR = .4;
                var specG = .34;
                var specB = .11;
                specular.push(specR, specG, specB);
+               ambient.push(specG, specB, specR);
             }
             
          }
@@ -143,11 +145,13 @@
             visualize[nSpheres - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
          }
-         lColorValues = 
-         [
-            1 - ((frequencyData[0]/255 + frequencyData[49]/255) / 2), (frequencyData[50]/255 + frequencyData[49]/255) / 2, .75,
-            .15, .15, .06
-         ];
+         // lColorValues = 
+         // [
+         //    1 - ((frequencyData[0]/255 + frequencyData[49]/255) / 2), (frequencyData[50]/255 + frequencyData[49]/255) / 2, .75,
+         //    .15, .15, .06
+         // ];
+
+
 
       }
 
