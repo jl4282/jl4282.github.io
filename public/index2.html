@@ -133,10 +133,17 @@
             }
             
          }
+
          else if (i === frequencyData.length - 1){ //capturing the last one
             visualize[nSpheres - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
          }
+         lColorValues = 
+         [
+            (frequencyData[0]/255 + frequencyData[49]/255) / 2, .6, 1.,
+            .15, .15, .06
+         ];
+
       }
 
       // specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
@@ -163,7 +170,7 @@
 
       var x = visualize[0];
 
-      var lDir0 = [1,1,1];
+      var lDir0 = [x,1,1];
       var lDir1 = [-1,-1,-1];
       normalize(lDir0);
       normalize(lDir1);
@@ -323,8 +330,8 @@
          }
       }
       
-      // color.r *= 1.;
-      // color.r *= uSpecP[1]; // SEE WHETHER TEST VALUE HAS BEEN PASSED CORRECTLY TO THE FRAGMENT SHADER.
+      // color.r *= 0.;
+      // color.r *= uSpecular[1].x; // SEE WHETHER TEST VALUE HAS BEEN PASSED CORRECTLY TO THE FRAGMENT SHADER.
       
       color = sqrt(color);                   // DO GAMMA CORRECTION.
 
