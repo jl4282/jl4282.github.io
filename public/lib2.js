@@ -139,7 +139,7 @@ function gl_update(gl) {
    gl.uniform3fv(gl.uAmbient , ambient);                               // Set the ambient value
    gl.uniform3fv(gl.uDiffuse , diffuse);                               // Set the diffuse value
    gl.uniform3fv(gl.uSpecular, specular);                              // Set the specular color value
-   gl.uniform1f (gl.uSpecP   , testValue);                             // Set the specular power value
+   gl.uniform1fv(gl.uSpecP   , specPower);                             // Set the specular power value
 
    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);                          // Render the square.
    requestAnimFrame(function() { gl_update(gl); });                 // Start the next frame.

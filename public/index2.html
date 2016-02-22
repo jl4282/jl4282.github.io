@@ -47,7 +47,7 @@
       .15, .15, .06
    ];
 
-   var ambient = [.3, .5, .9];
+   var ambient = [.1, .1, .1];
    var diffuse = 
    [
       .9, .9, .9,
@@ -74,27 +74,21 @@
    //    .40, .34, .11,
    //    .40, .34, .11
    // ];
-   var specPower = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+   var specPower = [];
+   var visualize = [];
+   for (var i = 0; i < 10; i++){
+      specPower.push(16.); //initial value of specPower
+      visualize.push(0); //initializing visualize? Do i even need to to that here?
+   }
+   console.log('spec power', specPower);
    // A TEST VARIABLE, JUST FOR PRACTICING DECLARING AND SETTING UNIFORM SHADER VARIABLES.
 
    var testValue = 0;
 
-   var visualize = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+   // var visualize = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
 
-   // var coordSpheres = [
-   //    -1., 0., -5, .1,
-   //    -.8, 0., -5., .1,
-   //    -.6, 0., -5., .1,
-   //    -.4, 0., -5., .1,
-   //    -.2, 0., -5, .1,
-   //    .2, 0., -5., .1,
-   //    .4, 0., -5., .1,
-   //    .6, 0., -5., .1,
-   //    .8, 0., -5., .1,
-   //    1., 0., -5., .1
-   // ];
    var nSpheres = document.getElementById('range').value;
 
    var maxSpheres = document.getElementById('range').max;
@@ -123,14 +117,24 @@
       for (var i = 0; i < frequencyData.length; i++){
          sum += frequencyData[i];
          if (i % 10 === 0){
+            // adding sum divided by the length of frequency and maximum spheres (10) to get the proper visualize
             visualize[i / 10 - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
-            var specR = visualize[i];
-            var specG = frequencyData[i] / 255 / 2;
-            var specB = frequencyData[i] / 255;
-            specular.push(specR, specG, specB);
+            // if (visualize[i] >= 0.2 ){
+            //    var specR = visualize[i];
+            //    var specG = frequencyData[i] / 255 / 2;
+            //    var specB = frequencyData[i] / 255;
+            //    specular.push(specR, specG, specB);
+            // }
+            // else {
+               var specR = .4;
+               var specG = .34;
+               var specB = .11;
+               specular.push(specR, specG, specB);
+            // }
+            
          }
-         else if (i === frequencyData.length - 1){
+         else if (i === frequencyData.length - 1){ //capturing the last one
             visualize[nSpheres - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
          }
@@ -140,26 +144,27 @@
       // normalizeMany(visualize); //get's messed up when less balls
 
 
+      // convert value to between -1 and 1
       for (var i = 0; i < visualize.length; i ++){
          visualize[i] = visualize[i] / 128 - 1;
       }
+
+      // Create sphere objects dynamically
       coordSpheres = [];
       for (var i = 0; i < nSpheres; i++){
          var x, y, z, r;
-         x = 2 / (nSpheres) * (i) - 1; //won't work -> spheres are disapearing around 1  2 3 = nSpheres
+         x = 2 / (nSpheres) * (i) - 1;
          y = visualize[i];
          z = -5.;
-         r = Math.abs(2 / nSpheres / 2); //does not scale to fewer spheres
-         // r = .1;
-         
+         r = Math.abs(2 / nSpheres / 2);
          coordSpheres.push(x, y, z, r);
       }
       
       // AT EACH ANIMATION FRAME, COMPUTE THE LIGHT DIRECTIONS.
 
-      var x = visualize[0]; 
+      var x = visualize[0];
 
-      var lDir0 = [x,1,1];
+      var lDir0 = [1,1,1];
       var lDir1 = [-1,-1,-1];
       normalize(lDir0);
       normalize(lDir1);
@@ -319,8 +324,8 @@
          }
       }
       
-
-      // color.r *= uSpecular[1]; // SEE WHETHER TEST VALUE HAS BEEN PASSED CORRECTLY TO THE FRAGMENT SHADER.
+      // color.r *= 1.;
+      // color.r *= uSpecP[1]; // SEE WHETHER TEST VALUE HAS BEEN PASSED CORRECTLY TO THE FRAGMENT SHADER.
       
       color = sqrt(color);                   // DO GAMMA CORRECTION.
 
