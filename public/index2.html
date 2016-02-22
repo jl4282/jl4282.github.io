@@ -47,7 +47,7 @@
       .15, .15, .06
    ];
 
-   var ambient = [.1, .1, .1];
+   var ambient = [];
    var diffuse = 
    [
       .9, .9, .9,
@@ -119,18 +119,20 @@
             // adding sum divided by the length of frequency and maximum spheres (10) to get the proper visualize
             visualize[i / 10 - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
-            // if (visualize[i] >= 0 ){
+            if (visualize[i] >= 0 ){
                var specR = visualize[i];
                var specG = frequencyData[i] / 255 / 2;
                var specB = frequencyData[i] / 255;
                specular.push(specR, specG, specB);
+               ambient.push(specG, specB, specR);
             }
-            // else {
-            //    var specR = .4;
-            //    var specG = .34;
-            //    var specB = .11;
-            //    specular.push(specR, specG, specB);
-            // }
+            else {
+               var specR = .4;
+               var specG = .34;
+               var specB = .11;
+               specular.push(specR, specG, specB);
+               ambient.push(specG, specB, specR);
+            }
             
          }
          else if (i === frequencyData.length - 1){ //capturing the last one
@@ -201,7 +203,7 @@
    uniform vec4  uSpheres[10];
    uniform int   uNSpheres;
    uniform vec3  uLColor[20];// Color value of lights
-   uniform vec3  uAmbient;   // Ambient color value
+   uniform vec3  uAmbient [20];   // Ambient color value
    uniform vec3  uDiffuse[20];   // Diffuse color value
    uniform vec3  uSpecular[20];  // Specular color value
    uniform float uSpecP[20];     // Specular Power
@@ -235,7 +237,7 @@
    vec3 shadeSphere(vec3 point, vec4 sphere, vec3 W, int sphereNum) {
       int num;
       vec3 normal = (point - sphere.xyz) / sphere.w;
-      vec3 shade = uAmbient;
+      vec3 shade;
       // vec3 specular = vec3(.40, .34, .11);
 
       // LOOP THROUGH THE FIRST uNlights LIGHT SOURCES.
@@ -253,36 +255,47 @@
             //need to either hardcode uDiffuse i or make it work somehow. Right now it's changing for each light, not for each sphere.
 
             if (sphereNum == 0){
+               shade = uAmbient[0];
                shade += uDiffuse[0] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[0] * max(0., pow(dot(E, R), uSpecP[0])) * uLColor[i];
             }
             else if (sphereNum == 1){
+               shade = uAmbient[1];
                shade += uDiffuse[1] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[1] * max(0., pow(dot(E, R), uSpecP[1])) * uLColor[i];
             }
             else if (sphereNum == 2){
+               shade = uAmbient[2];
                shade += uDiffuse[2] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[2] * max(0., pow(dot(E, R), uSpecP[2])) * uLColor[i];
             }
             else if (sphereNum == 3){
+               shade = uAmbient[3];
                shade += uDiffuse[3] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[3] * max(0., pow(dot(E, R), uSpecP[3])) * uLColor[i];
             }
             else if (sphereNum == 4){
+               shade = uAmbient[4];
                shade += uDiffuse[4] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[4] * max(0., pow(dot(E, R), uSpecP[4])) * uLColor[i];
             }
             else if (sphereNum == 5){
+               shade = uAmbient[5];
                shade += uDiffuse[5] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[5] * max(0., pow(dot(E, R), uSpecP[5])) * uLColor[i];
             }
             else if (sphereNum == 6){
+               shade = uAmbient[6];
                shade += uDiffuse[6] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[6] * max(0., pow(dot(E, R), uSpecP[6])) * uLColor[i];
             }
             else if (sphereNum == 7){
+               shade = uAmbient[7];
                shade += uDiffuse[7] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[7] * max(0., pow(dot(E, R), uSpecP[7])) * uLColor[i];
             }
             else if (sphereNum == 8){
+               shade = uAmbient[8];
                shade += uDiffuse[8] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[8] * max(0., pow(dot(E, R), uSpecP[8])) * uLColor[i];
             }
             else if (sphereNum == 9){
+               shade = uAmbient[9];
                shade += uDiffuse[9] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[9] * max(0., pow(dot(E, R), uSpecP[9])) * uLColor[i];
             }
             else if (sphereNum == 10){
+               shade = uAmbient[10];
                shade += uDiffuse[10] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[10] * max(0., pow(dot(E, R), uSpecP[10])) * uLColor[i];
             }
 
@@ -323,7 +336,7 @@
          }
       }
       
-      // color.r *= 1.;
+      // color.r *= uAmbient[0].x;
       // color.r *= uSpecP[1]; // SEE WHETHER TEST VALUE HAS BEEN PASSED CORRECTLY TO THE FRAGMENT SHADER.
       
       color = sqrt(color);                   // DO GAMMA CORRECTION.
