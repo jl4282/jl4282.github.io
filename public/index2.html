@@ -47,80 +47,58 @@
       .15, .15, .06
    ];
 
-   var ambient = [];
-   var diffuse = 
-   [
-      .9, .9, .9,
-      .9, .9, .9,
-      .9, .9, .9,
-      .9, .9, .9,
-      .9, .9, .9,
-      .9, .9, .9,
-      .9, .9, .9,
-      .9, .9, .9,
-      .9, .9, .9,
-      .9, .9, .9
-   ];
-   // var specular = 
-   // [
-   //    .10, .9, .5,
-   //    .10, .9, .5,
-   //    .90, .84, .41,
-   //    .40, .34, .11,
-   //    .40, .34, .11,
-   //    .40, .34, .11,
-   //    .40, .34, .11,
-   //    .40, .34, .11,
-   //    .40, .34, .11,
-   //    .40, .34, .11
-   // ];
-   var specPower = [];
-   var visualize = [];
    function generateRand(){
       return (Math.random() * (0.4 - 0.1) + 0.1); 
    }
+
+   // create empty arrays
+
+   var ambient = [];
+   var diffuse = [];
+   var specPower = [];
+   var visualize = [];
+   
    for (var i = 0; i < 10; i++){
       specPower.push(16.); //initial value of specPower
       visualize.push(0); //initializing visualize? Do i even need to to that here?
-      ambient.push(generateRand() , generateRand(), generateRand());
+      diffuse.push(.9, .9, .9); //add the diffuse value
+      ambient.push(generateRand() , generateRand(), generateRand()); //random colors
    }
    // A TEST VARIABLE, JUST FOR PRACTICING DECLARING AND SETTING UNIFORM SHADER VARIABLES.
 
    var testValue = 0;
 
-   // var visualize = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-   // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
+   
 
    var nSpheres = document.getElementById('range').value;
 
    var maxSpheres = document.getElementById('range').max;
 
+   // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
+
    var update = function() {
 
-      // console.log('source: ', document.getElementById('form').song.value);
-
+      // if the source value changes, then get a new song
       if (audioElement.src.search(document.getElementById('form').song.value) < 0){
-         console.log('change src');
          audioElement.src = "./audio/" + document.getElementById('form').song.value;
          audioElement.pause();
          audioElement.load();
       }
 
-
+      // analyze the frequency
       analyser.getByteFrequencyData(frequencyData);
 
+      // get how many spheres are showing
       nSpheres = document.getElementById('range').value;
 
-      // var specR, specG, specB = 0;
       specular = [];
 
       //get 4 values corresponding to 256 numbers in the array
       var sum = 0;
-      console.log('hi');
-      // ambient = [];
+      // ambient = []; //why comment out ambient here? why not? seems to work better. but who knows. My mind starts to go blank after working on this for a week straight.
       for (var i = 0; i < frequencyData.length; i++){
-         sum += frequencyData[i];
+         sum += frequencyData[i]; //accumulate a sum of frequency data
          if (i % 10 === 0){
             // adding sum divided by the length of frequency and maximum spheres (10) to get the proper visualize
             visualize[i / 10 - 1] = sum / (frequencyData.length / maxSpheres);
@@ -129,38 +107,25 @@
                var specR = visualize[i];
                var specG = frequencyData[i] / 255;
                var specB = frequencyData[i] / 255;
+               //this doesn't seem to be working properly... been trying to get it all week
                specular.push(specR, specG, specB);
-               ambient.push(specG, specB, specR);
+               ambient.push(specG, specB, specR); 
             }
             else {
                var specR = .4;
                var specG = .34;
                var specB = .11;
+               //these don't seem to be working properly
                specular.push(specR, specG, specB);
-               ambient.push(specG, specB, specR);
+               ambient.push(specG, specB, specR); 
             }
-            // console.log(i);
-            // console.log('specular: ', specular[0], specular[1] );
-            // console.log('ambient: ', ambient[0], ambient[1]);
          }
          
          else if (i === frequencyData.length - 1){ //capturing the last one
             visualize[nSpheres - 1] = sum / (frequencyData.length / maxSpheres);
             sum = 0;
          }
-         // lColorValues = 
-         // [
-         //    1 - ((frequencyData[0]/255 + frequencyData[49]/255) / 2), (frequencyData[50]/255 + frequencyData[49]/255) / 2, .75,
-         //    .15, .15, .06
-         // ];
-
-
-
       }
-
-      // specular = [frequencyData[0]/255, frequencyData[49]/255, frequencyData[99]/255];
-      // normalizeMany(visualize); //get's messed up when less balls
-
 
       // convert value to between -1 and 1
       for (var i = 0; i < visualize.length; i ++){
@@ -255,6 +220,7 @@
       int num;
       vec3 normal = (point - sphere.xyz) / sphere.w;
       vec3 shade;
+      // because dynamic variables weren't working ¯\_(ツ)_/¯
       if (sphereNum == 0){
          shade = uAmbient[0];
       }
@@ -285,7 +251,6 @@
       else if (sphereNum == 9){
          shade = uAmbient[9];
       }
-      // vec3 specular = vec3(.40, .34, .11);
 
       // LOOP THROUGH THE FIRST uNlights LIGHT SOURCES.
 
@@ -301,6 +266,7 @@
 
             //need to either hardcode uDiffuse i or make it work somehow. Right now it's changing for each light, not for each sphere.
 
+            // because dynamic variables weren't working ¯\_(ツ)_/¯
             if (sphereNum == 0){
                shade += uDiffuse[0] * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular[0] * max(0., pow(dot(E, R), uSpecP[0])) * uLColor[i];
             }
@@ -361,6 +327,7 @@
       vec3 color = vec3(.05, .05, .05);         // BACKGROUND COLOR
       float t = 10000.;
       vec4 nearSphere;
+      // checking which sphere is closest.
       for (int i = 0; i < 20; i++){
          if (i < uNSpheres){
             float temp = raySphere(V, W, uSpheres[i]);
