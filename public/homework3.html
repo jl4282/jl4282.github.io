@@ -1,4 +1,4 @@
-<script src=lib2_2.js></script>
+<script src=lib3.js></script>
 
 <body bgcolor=black>
 <center>
@@ -68,6 +68,17 @@
       // THIS IS JUST A TEST VALUE THAT WE CREATED FOR PRACTICE.
 
       testValue = .5 + .5 * Math.sin(2 * time);
+
+      gl.uniform3fv(uVar('uLDir')   , lDirValues); // Set light directions uniform variable.
+      gl.uniform1i (uVar('uNLights'), nLights);    // Set number of lights uniform variable.
+      gl.uniform4fv(uVar('uSpheres'), coordSpheres); // Set sphere coordinates
+      gl.uniform1i(uVar('uNSpheres'), nSpheres); // Set number of spheres
+      gl.uniform3fv(uVar('uAmbient'), ambient);
+      gl.uniform3fv(uVar('uDiffuse'), diffuse);
+      gl.uniform3fv(uVar('uLColor'), lColorValues);
+      gl.uniform3fv(uVar('uSpecular'), specular);
+      gl.uniform1f (uVar('uSpecP'), specPower);
+
    }
 </script>
 
