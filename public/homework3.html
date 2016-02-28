@@ -101,15 +101,6 @@
 
    varying vec3  vPosition;
 
-   /*
-      THINGS TO ADD:
-         * LIGHT COLOR ++
-         * AMBIENT COLOR ++ 
-         * DIFFUSE COLOR ++
-         * SPECULAR COLOR ++
-         * SPECULAR POWER ++
-
-   */
 
    // FOR EXTRA CREDIT: IMPLEMENT MULTIPLE SPHERES.
 
@@ -135,34 +126,6 @@
       return discr >= 0. ? (-b - sqrt(discr)) / 2. : 10000.;
    }
 
-   // YOU NEED TO CHANGE THIS TO USE THE PHONG SHADING ALGORITHM.
-
-
-   // float castShadow(vec3 V, vec3 W, vec4 sph){
-   //    for (int i = 0; i < uNSpheres; i++){
-   //       if (i == 0){
-   //          if (uSpheres[0].xyz != sph.xyz){
-   //             vec3 D = V - uSpheres[0].xyz;
-   //             float b = 2. * dot(W, D);
-   //             float c = dot(D, D) - uSpheres[0].w * uSpheres[0].w;
-   //             float discr = b * b - 4. * c;
-   //             return discr >= 0. ? (-b - sqrt(discr)) / 2. : 10000.;
-   //          }
-   //       }
-   //       else if (i == 1){
-   //          if (uSpheres[1].xyz != sph.xyz){
-   //             vec3 D = V - uSpheres[1].xyz;
-   //             float b = 2. * dot(W, D);
-   //             float c = dot(D, D) - uSpheres[1].w * uSpheres[1].w;
-   //             float discr = b * b - 4. * c;
-   //             return discr >= 0. ? (-b - sqrt(discr)) / 2. : 10000.;
-   //          }
-   //       }
-         
-   //    }
-   //    return -10.;
-   // }
-
    float castShadow(vec3 V, vec3 W){
       float t = -1.;
       for (int k = 0; k < 20; k++){
@@ -175,6 +138,68 @@
       }
       return 10000.0;
    }
+
+   // vec3 castReflection(vec3 V, vec3 W){
+   //    float t = 10000.;
+   //    vec4 nearSphere;
+   //    vec3 nearSphereAmbient;
+   //    for (int k = 0; k < 20; k++){
+   //       if (k < uNSpheres){
+   //          float temp = raySphere(V, W, uSpheres[k]);
+   //          if (temp < t){
+   //             t = temp;
+   //             nearSphere = uSpheres[k];
+   //             nearSphereAmbient = uAmbient[k];
+   //          }
+   //       }
+   //    }
+   //    if (t < 10000. && t > 0.){
+   //       //getting error here....
+   //       vec3 color = shadeSphere(V + t * W, nearSphere, W, nearSphereAmbient);
+   //       return color;
+   //       // return vec3(1., 1., 1.);
+   //    }
+   //    return vec3(1., 1., 1.);
+   // }
+
+   /*
+   vec3 castRefraction(float n1, float n2, vec3 W){
+      1. find theta2 and bend light by that
+      2. continue ray tracing inside of sphere until you hit the other side of the sphere
+      3. compute where it exits the sphere using the second root of the quadratic equation (changing minus to plus)
+      4. compute how much it refracts on the way out of the sphere
+      5. shoot ray beyond to see what it hits
+   }
+   */
+
+   vec3 castRefraction(float n1, float n2, vec3 W /* direction of light */, vec3 norm){
+      // find theta2
+      float cos = dot(W, norm) / (length(W) * length(norm));
+      float theta2 = acos(radians(cos));
+      // is this even right?
+
+      return vec3(1., 1., 1.);
+   }
+
+
+   /*
+
+   In the real world many materials, such as oil, water, plastic, glass and diamond, are transparent. A transparent material has an index of refraction which measures how much light slows down as it enters that medium. For example, the index of refraction of water is about 1.333, of glass is about 1.5. The index of refraction of diamond, the substance with the highest known index of refraction, is 2.42.
+As in the diagram to the right, you can add refraction to your ray tracing by following Snell's law:
+
+n1 / n2 = sin(θ2) / sin(θ1)
+to determine how much the ray should bend as it enters or exits a transparent object.
+Note that you will need to change your ray tracing model to incorporate refraction. In addition to your initial incoming ray, and any shadow or reflection rays, you also need to add a refraction ray, which starts just inside the surface, and continues inward.
+
+Note that if you have ray traced to a sphere, and are now computing where the refracting ray will exit that sphere, you will want to compute the second root of the quadratic equation.
+
+Then, after this refracting ray has exited out the back of the transparent sphere, you will want to compute how much it refracts on its way out, and then shoot a ray from there into the scene behind the sphere.
+
+In general, you use the results of refraction by mixing the color it returns together with whatever surface color you have computed due to pure reflection or blinn/phong reflectance.
+
+
+   */
+
 
    vec3 shadeSphere(vec3 point, vec4 sphere, vec3 W, vec3 ambient) {
       vec3 normal = (point - sphere.xyz) / sphere.w;
@@ -202,7 +227,11 @@
                   calculate the base color (diffuse, ambient, specular), then if you have reflective surface, cast out and figure out what light is being reflected and add it to the base color
                */
 
+               vec3 WPrime = 2. * (dot(normal, -W) * normal - (-W));
 
+               /*vec3 reflection = castReflection(point + .001 * WPrime, WPrime);
+
+               shade += reflection;*/
 
 
                /*then calculate refraction?
@@ -215,7 +244,8 @@
 
             }
             else { //hits object
-               shade += uDiffuse * max(0., dot(normal, uLDir[i])) * uLColor[i] * 0.5; 
+               // shade += uDiffuse * max(0., dot(normal, uLDir[i])) * uLColor[i] * 0.5; 
+               shade *= uDiffuse;
                /*
                   level of ambient light
                   user normal of sphere putting the shadow onto
