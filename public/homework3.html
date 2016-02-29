@@ -266,9 +266,23 @@ In general, you use the results of refraction by mixing the color it returns tog
 
    vec3 shadeSphere(vec3 point, vec4 sphere, vec3 W, vec3 ambient) {
       vec3 normal = (point - sphere.xyz) / sphere.w;
-      vec3 shade = ambient;
+      
       vec3 specular = vec3(.40, .34, .11);
       // float p = 1.;
+
+      float c = cos(.3 * uTime), s = sin(.3 * uTime);
+      vec3 p = vec3(c * normal.x - s * normal.z, normal.y, s * normal.x + c * normal.z);
+      vec3 shade = ambient * p;
+      //vec3 shade = ambient * (1. - 10. * turbulence(5. * normal + vec3(0.,0.,uTime)));
+
+      // COMPUTE GRADIENT OF "BUMPY" TEXTURE, THEN SUBTRACT THAT GRADIENT FROM NORMAL.
+
+      // float t0 = p;
+      // float tx = p + vec3(.01, 0., 0.);
+      // float ty = p + vec3(0., .01, 0.);
+      // float tz = p + vec3(0., 0., .01);
+
+      // normal = normalize(normal - vec3(tx-t0, ty-t0, tz-t0) / .01);
 
       // LOOP THROUGH THE FIRST uNlights LIGHT SOURCES.
 
@@ -284,6 +298,7 @@ In general, you use the results of refraction by mixing the color it returns tog
                vec3 E = -W;
                vec3 R = 2. * (dot(normal, uLDir[i]) * normal) - uLDir[i];
                shade += uDiffuse * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular * max(0., pow(dot(E, R), uSpecP)) * uLColor[i];
+               shade *= turbulence(p);
 
                /*then calculate reflection?
                   bounce the light off the normal
@@ -308,7 +323,8 @@ In general, you use the results of refraction by mixing the color it returns tog
             }
             else { //hits object
                // shade += uDiffuse * max(0., dot(normal, uLDir[i])) * uLColor[i] * 0.5; 
-               shade *= uDiffuse;
+               shade *= turbulence(p);
+               // shade *= uDiffuse;
                /*
                   level of ambient light
                   user normal of sphere putting the shadow onto
