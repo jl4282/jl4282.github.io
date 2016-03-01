@@ -31,8 +31,9 @@
 
    var ambient = 
    [
-      .5, .2, .9,
-      .0, .0, .0
+      .5, .5, .1,
+      .0, .0, .0,
+      .0, .0, .0,
    ];
    var diffuse = [.9, .9, .9];
    var specular = [.40, .34, .11];
@@ -43,12 +44,8 @@
 
    // UPDATE FUNCTION IS CALLED BY THE LIBRARY BEFORE RENDERING, ONCE PER ANIMATION FRAME.
 
-   var nSpheres = 2;
-   var coordSpheres = 
-   [
-      .2, -.5, -4, .93,
-      0., 0., -3., .35
-   ];
+   var nSpheres = 3;
+   
 
    var update = function() {
 
@@ -56,7 +53,7 @@
 
       var x = Math.sin(Math.PI * time);
 
-      var lDir0 = [x,.7,1];
+      var lDir0 = [x,.3,1];
       var lDir1 = [-1,-1,-1];
       normalize(lDir0);
       normalize(lDir1);
@@ -68,6 +65,14 @@
       // THIS IS JUST A TEST VALUE THAT WE CREATED FOR PRACTICE.
 
       testValue = .5 + .5 * Math.sin(2 * time);
+
+      var coordSpheres = 
+      [
+         3 * Math.sin(time), -.5, 3 * Math.cos(time) - 8., .93,
+         0., 0., -5., .35,
+         0.3, 0., -3., .35
+
+      ];
 
       gl.uniform3fv(uVar('uLDir')   , lDirValues); // Set light directions uniform variable.
       gl.uniform1i (uVar('uNLights'), nLights);    // Set number of lights uniform variable.
@@ -203,6 +208,8 @@
    }
 
 /*
+   COULDN'T GET IT TO WORK
+
    vec3 castReflection(vec3 V, vec3 W){
       float t = 10000.;
       vec4 nearSphere;
@@ -269,7 +276,8 @@
                shade += uDiffuse * max(0., dot(normal, uLDir[i])) * uLColor[i] + uSpecular * max(0., pow(dot(E, R), uSpecP)) * uLColor[i];
                shade *= turbulence(p);
 
-               /*then calculate reflection?
+               /*
+                  then calculate reflection?
                   bounce the light off the normal
                   calculate the base color (diffuse, ambient, specular), then if you have reflective surface, cast out and figure out what light is being reflected and add it to the base color
                */
@@ -292,20 +300,12 @@
 
             }
             else { //hits object
-               // shade += uDiffuse * max(0., dot(normal, uLDir[i])) * uLColor[i] * 0.5; 
                shade *= turbulence(p);
-               // shade *= uDiffuse;
                /*
                   level of ambient light
                   user normal of sphere putting the shadow onto
                */
             }
-
-            
-
-            
-            // OLD SHADER CODE
-            // shade += lColor[i] * uDiffuse * max(0., dot(normal, uLDir[i]));
             
          }
       }
@@ -313,16 +313,6 @@
    }
 
    void main(void) {
-      // now uniform variable
-      // lColor[0] = vec3(.6,.6,1.);
-      // lColor[1] = vec3(.15,.15,.06);
-
-      // sphere = uSpheres;
-      // sphere = vec4(0., 0., -3., .35);
-
-      // ambient = uAmbient;
-      // ambient = vec3(.1, .1, .1);
-      // diffuse = vec3(.9, .9, .9);
 
       // COMPUTE V AND W TO CREATE THE RAY FOR THIS PIXEL, USING vPosition.x AND vPosition.y.
 
