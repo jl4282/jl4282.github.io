@@ -1,0 +1,217 @@
+
+<b><a href=http://www.w3schools.com/tags/ref_canvas.asp target=1>
+<big>HTML5 Canvas Reference is here</big></a></b>
+
+<!! THIS IS AN EXAMPLE OF A HOMEWORK DOCUMENT THAT CONTAINS CANVAS BASED GRAPHICS.
+    YOU SHOULD CHANGE THE TEXT BELOW TO SOMETHING THAT DESCRIBES YOUR OWN WORK.>
+
+<p>
+Here is my next cool homework, and this is my even more excellent example:
+<p>
+
+<center>
+<table>
+<tr>
+<td>
+<center>
+<canvas id=canvas1 width=600 height=400></canvas>
+<p>
+
+<i>This is how I show off my cool Matrix class.</i>
+
+</center>
+</td>
+</tr>
+</table>
+<p>
+</center>
+<p>
+
+<script src=utility.js></script>
+<script src=drawlib1.js></script>
+<script src=matrix.js></script>
+
+<script>
+   var canvas;
+
+
+   // BELOW IS THE CODE WE WROTE ON THURSDAY TO TEST THE MATRIX CLASS.
+   // YOU NEED TO FINISH IMPLEMENTING THE MATRIX CLASS, AND THEN
+   // CREATE AN ANIMATED GRAPHICAL SCENE TO DEMONSTRATE YOUR WORK.
+   // YOU SHOULD USE BOTH THE time AND this.cursor VARIABLES.
+
+   var matrix = new Matrix();
+
+   matrix.identity();
+   matrix.translate(1, 0, 0);
+   matrix.translate(2, 3, 0);
+
+   console.log(matrix.toString());
+
+   var srcVec = new Vector3(10, 0, 0);
+   var dstVec = new Vector3(0, 0, 0);
+   matrix.transform(srcVec, dstVec);
+   console.log(dstVec.toString());
+   
+   /////////////////////////////////////////////////////////////////////
+
+   var matrix2 = new Matrix();
+   matrix2.identity();
+   var srcVec = new Vector3(1, 2, 3); // x y z
+   var dstVec = new Vector3(0, 0, 0);
+   matrix2.rotateX(srcVec, dstVec, .5);
+   pixel = {};
+   console.log(dstVec.toString()); //should be 1, -2, -3
+
+
+   canvas = initCanvas('canvas1');
+   var HEIGHT = canvas.height;
+   var WIDTH = canvas.width;
+
+   dstVec.viewportTransform(HEIGHT, WIDTH, pixel);
+   console.log('pixel', pixel);
+
+
+   /////////////////////////////////////////////////////////////////////
+
+   matrix.identity();
+   matrix.translate()
+   var box = {
+      ftl: new Vector3(-.5, .5, .5), //front top left
+      btl: new Vector3(-.5, .5, -.5), // back top left
+      ftr: new Vector3(.5, .5, .5),
+      btr: new Vector3(.5, .5, -.5),
+      fbr: new Vector3(.5, -.5, .5),
+      bbr: new Vector3(.5, -.5, -.5),
+      fbl: new Vector3(-.5, -.5, .5),
+      bbl: new Vector3(-.5, -.5, -.5) // back bottom left
+   };
+
+   var boxRotate1 = {
+      ftl: new Vector3(-.5, .5, .5),
+      btl: new Vector3(-.5, .5, -.5), // back top left
+      ftr: new Vector3(.5, .5, .5),
+      btr: new Vector3(.5, .5, -.5),
+      fbr: new Vector3(.5, -.5, .5),
+      bbr: new Vector3(.5, -.5, -.5),
+      fbl: new Vector3(-.5, -.5, .5),
+      bbl: new Vector3(-.5, -.5, -.5) // back bottom left
+   };
+
+   var boxRotate2 = {
+      ftl: new Vector3(-.5, .5, .5),
+      btl: new Vector3(-.5, .5, -.5), // back top left
+      ftr: new Vector3(.5, .5, .5),
+      btr: new Vector3(.5, .5, -.5),
+      fbr: new Vector3(.5, -.5, .5),
+      bbr: new Vector3(.5, -.5, -.5),
+      fbl: new Vector3(-.5, -.5, .5),
+      bbl: new Vector3(-.5, -.5, -.5) // back bottom left
+   }
+
+   function rotateBox(x, y){
+      matrix.rotateY(box.ftl, boxRotate1.ftl, (x * 360) / WIDTH);
+      matrix.rotateY(box.ftr, boxRotate1.ftr, (x * 360) / WIDTH);
+      matrix.rotateY(box.fbr, boxRotate1.fbr, (x * 360) / WIDTH);
+      matrix.rotateY(box.fbl, boxRotate1.fbl, (x * 360) / WIDTH);
+      matrix.rotateY(box.btl, boxRotate1.btl, (x * 360) / WIDTH);
+      matrix.rotateY(box.btr, boxRotate1.btr, (x * 360) / WIDTH);
+      matrix.rotateY(box.bbr, boxRotate1.bbr, (x * 360) / WIDTH);
+      matrix.rotateY(box.bbl, boxRotate1.bbl, (x * 360) / WIDTH);
+      
+      matrix.rotateX(boxRotate1.ftl, boxRotate2.ftl, 60);
+      matrix.rotateX(boxRotate1.ftr, boxRotate2.ftr, 60);
+      matrix.rotateX(boxRotate1.fbr, boxRotate2.fbr, 60);
+      matrix.rotateX(boxRotate1.fbl, boxRotate2.fbl, 60);
+      matrix.rotateX(boxRotate1.btl, boxRotate2.btl, 60);
+      matrix.rotateX(boxRotate1.btr, boxRotate2.btr, 60);
+      matrix.rotateX(boxRotate1.bbr, boxRotate2.bbr, 60);
+      matrix.rotateX(boxRotate1.bbl, boxRotate2.bbl, 60);
+   }
+
+      
+
+
+
+
+
+   function createBox(g, box){
+      function viewAndDraw(point){
+         var px = {};
+         point.viewportTransform(WIDTH, HEIGHT, px);
+         g.lineTo(px.x, px.y);
+      }
+      function viewTransform(point){
+         var px = {};
+         point.viewportTransform(WIDTH, HEIGHT, px);
+         return px;
+      }
+      function viewTransformMove(point, g){
+         var px = {};
+         point.viewportTransform(WIDTH, HEIGHT, px);
+         g.moveTo(px.x, px.y);
+      }
+      // px = {};
+      g.strokeStyle='red';
+      g.beginPath();
+      var px = viewTransform(box.ftl);
+      g.moveTo(px.x, px.y);
+
+      //front
+      viewAndDraw(box.ftr);
+      viewAndDraw(box.fbr);
+      viewAndDraw(box.fbl);
+      viewAndDraw(box.ftl);
+
+      //back
+      px = viewTransform(box.btl);
+      g.moveTo(px.x, px.y)
+      viewAndDraw(box.btr);
+      viewAndDraw(box.bbr);
+      viewAndDraw(box.bbl);
+      viewAndDraw(box.btl);
+
+      //connect front to back
+      viewTransformMove(box.ftr, g);
+      viewAndDraw(box.btr);
+
+      viewTransformMove(box.ftl, g);
+      viewAndDraw(box.btl);
+
+      viewTransformMove(box.fbr, g);
+      viewAndDraw(box.bbr);
+
+      viewTransformMove(box.fbl, g);
+      viewAndDraw(box.bbl);
+
+      g.stroke();
+   }
+
+
+
+
+
+
+   
+   canvas.update = function(g) {
+
+      // YOU ARE GOING TO REPLACE THE CODE BELOW.
+
+      var x = this.cursor.x,
+          y = this.cursor.y;
+
+      g.strokeStyle = 'black';
+      g.strokeRect(1, 1, this.width-2, this.height-2);
+
+      rotateBox(x, y);
+
+      createBox(g, boxRotate2);
+
+      // var diameter = 100 * (1 + .1 * Math.sin(time * 10));
+      // g.fillStyle = this.cursor.z ? 'red' : 'rgb(0,0,128)';
+      // g.fillRect(x - diameter / 2, y - diameter / 2, diameter, diameter);
+
+
+   }
+</script>
+

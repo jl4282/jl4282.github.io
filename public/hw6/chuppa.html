@@ -1,0 +1,353 @@
+
+<b><a href=http://www.w3schools.com/tags/ref_canvas.asp target=1>
+<big>HTML5 Canvas Reference is here</big></a></b>
+
+<!! THIS IS AN EXAMPLE OF A HOMEWORK DOCUMENT THAT CONTAINS CANVAS BASED GRAPHICS.
+    YOU SHOULD CHANGE THE TEXT BELOW TO SOMETHING THAT DESCRIBES YOUR OWN WORK.>
+
+<p>
+Here is my next cool homework, and this is my even more excellent example:
+<p>
+
+<center>
+<table>
+<tr>
+<td>
+<center>
+<canvas id=canvas1 width=600 height=400></canvas>
+<p>
+
+<i>This is how I show off my cool Matrix class.</i>
+
+</center>
+</td>
+</tr>
+</table>
+<p>
+</center>
+<p>
+
+<script src=utility.js></script>
+<script src=drawlib1.js></script>
+<script src=matrix.js></script>
+
+<script>
+   var canvas;
+
+
+   // BELOW IS THE CODE WE WROTE ON THURSDAY TO TEST THE MATRIX CLASS.
+   // YOU NEED TO FINISH IMPLEMENTING THE MATRIX CLASS, AND THEN
+   // CREATE AN ANIMATED GRAPHICAL SCENE TO DEMONSTRATE YOUR WORK.
+   // YOU SHOULD USE BOTH THE time AND this.cursor VARIABLES.
+
+   var matrix = new Matrix();
+
+   matrix.identity();
+   matrix.translate(1, 0, 0);
+   matrix.translate(2, 3, 0);
+
+   console.log(matrix.toString());
+
+   var srcVec = new Vector3(10, 0, 0);
+   var dstVec = new Vector3(0, 0, 0);
+   matrix.transform(srcVec, dstVec);
+   console.log(dstVec.toString());
+   
+   /////////////////////////////////////////////////////////////////////
+
+   var matrix2 = new Matrix();
+   matrix2.identity();
+   var srcVec = new Vector3(1, 2, 3); // x y z
+   var dstVec = new Vector3(0, 0, 0);
+   matrix2.rotateX(srcVec, dstVec, .5);
+   pixel = {};
+   console.log(dstVec.toString()); //should be 1, -2, -3
+
+
+   canvas = initCanvas('canvas1');
+   var HEIGHT = canvas.height;
+   var WIDTH = canvas.width;
+
+   dstVec.viewportTransform(HEIGHT, WIDTH, pixel);
+   console.log('pixel', pixel);
+
+
+   /////////////////////////////////////////////////////////////////////
+
+   matrix.identity();
+   matrix.translate();
+
+
+   var chuppa = {
+      ftl: new Vector3(-.5, .5, .5), //front top left
+      btl: new Vector3(-.5, .5, -.5), // back top left
+      ftr: new Vector3(.5, .5, .5),
+      btr: new Vector3(.5, .5, -.5),
+      fbr: new Vector3(.5, -.5, .5),
+      bbr: new Vector3(.5, -.5, -.5),
+      fbl: new Vector3(-.5, -.5, .5),
+      bbl: new Vector3(-.5, -.5, -.5) // back bottom left
+   };
+
+   var boxRotate1 = {
+      ftl: new Vector3(-.5, .5, .5),
+      btl: new Vector3(-.5, .5, -.5), // back top left
+      ftr: new Vector3(.5, .5, .5),
+      btr: new Vector3(.5, .5, -.5),
+      fbr: new Vector3(.5, -.5, .5),
+      bbr: new Vector3(.5, -.5, -.5),
+      fbl: new Vector3(-.5, -.5, .5),
+      bbl: new Vector3(-.5, -.5, -.5) // back bottom left
+   };
+
+   var boxRotate2 = {
+      ftl: new Vector3(-.5, .5, .5),
+      btl: new Vector3(-.5, .5, -.5), // back top left
+      ftr: new Vector3(.5, .5, .5),
+      btr: new Vector3(.5, .5, -.5),
+      fbr: new Vector3(.5, -.5, .5),
+      bbr: new Vector3(.5, -.5, -.5),
+      fbl: new Vector3(-.5, -.5, .5),
+      bbl: new Vector3(-.5, -.5, -.5) // back bottom left
+   }
+
+   function rotateBox(x, y){
+      var x = x / WIDTH * 2;
+      matrix.rotateY(chuppa.ftl, boxRotate1.ftl, /*Math.sin(x)*/ x );
+      matrix.rotateY(chuppa.ftr, boxRotate1.ftr, /*Math.sin(x)*/ x );
+      matrix.rotateY(chuppa.fbr, boxRotate1.fbr, /*Math.sin(x)*/ x );
+      matrix.rotateY(chuppa.fbl, boxRotate1.fbl, /*Math.sin(x)*/ x );
+      matrix.rotateY(chuppa.btl, boxRotate1.btl, /*Math.sin(x)*/ x );
+      matrix.rotateY(chuppa.btr, boxRotate1.btr, /*Math.sin(x)*/ x );
+      matrix.rotateY(chuppa.bbr, boxRotate1.bbr, /*Math.sin(x)*/ x );
+      matrix.rotateY(chuppa.bbl, boxRotate1.bbl, /*Math.sin(x)*/ x );
+      
+      matrix.rotateX(boxRotate1.ftl, boxRotate2.ftl, .2);
+      matrix.rotateX(boxRotate1.ftr, boxRotate2.ftr, .2);
+      matrix.rotateX(boxRotate1.fbr, boxRotate2.fbr, .2);
+      matrix.rotateX(boxRotate1.fbl, boxRotate2.fbl, .2);
+      matrix.rotateX(boxRotate1.btl, boxRotate2.btl, .2);
+      matrix.rotateX(boxRotate1.btr, boxRotate2.btr, .2);
+      matrix.rotateX(boxRotate1.bbr, boxRotate2.bbr, .2);
+      matrix.rotateX(boxRotate1.bbl, boxRotate2.bbl, .2);
+   }
+
+
+   function rotate(obj, x, y){
+
+      var tempObj = {};
+      for (var key in obj){
+          if (obj.hasOwnProperty(key)) {
+            tempObj[key] = new Vector3 (0, 0, 0);
+            matrix.rotateY(obj[key], tempObj[key], Math.sin(x) );
+          }
+      }
+      return tempObj;
+   }
+
+   function scale(obj, y){
+      var y = y / HEIGHT;
+      var tempObj = {};
+      for (var key in obj){
+          if (obj.hasOwnProperty(key)) {
+            tempObj[key] = new Vector3 (0, 0, 0);
+            matrix.scale(obj[key], tempObj[key], y, y , y);
+          }
+      }
+      return tempObj;
+   }
+
+   function perspective(obj, y){
+      // var y = y / HEIGHT;
+      var tempObj = {};
+      for (var key in obj){
+          if (obj.hasOwnProperty(key)) {
+            tempObj[key] = new Vector3 (0, 0, 0);
+            matrix.perspective(obj[key], tempObj[key], y, 5 , 5);
+          }
+      }
+      return tempObj;
+   }
+
+
+   function viewAndDraw(point, g){
+      var px = {};
+      point.viewportTransform(WIDTH, HEIGHT, px);
+      g.lineTo(px.x, px.y);
+   }
+   function viewTransform(point){
+      var px = {};
+      point.viewportTransform(WIDTH, HEIGHT, px);
+      return px;
+   }
+   function viewTransformMove(point, g){
+      var px = {};
+      point.viewportTransform(WIDTH, HEIGHT, px);
+      g.moveTo(px.x, px.y);
+   }
+
+
+   function drawChuppa(g, box){
+      // px = {};
+      g.strokeStyle='red';
+      g.beginPath();
+      var px = viewTransform(box.ftl);
+      g.moveTo(px.x, px.y);
+
+      //top
+      viewAndDraw(box.ftr, g);
+      viewAndDraw(box.btr, g);
+      viewAndDraw(box.btl, g);
+      viewAndDraw(box.ftl, g);
+
+      //poles
+      viewTransformMove(box.fbl, g);
+      viewAndDraw(box.ftl, g);
+
+      viewTransformMove(box.fbr, g);
+      viewAndDraw(box.ftr, g);
+
+      viewTransformMove(box.bbl, g);
+      viewAndDraw(box.btl, g);
+
+      viewTransformMove(box.bbr, g);
+      viewAndDraw(box.btr, g);
+
+      g.stroke();
+   }
+
+   var wife = {
+      head: new Vector3(.75 - 1, .17, 0),
+      neck: new Vector3(.75 - 1, .1, 0),
+      waist: new Vector3(.75 - 1, -.1, 0),
+      bottomLeftSkirt: new Vector3(.55 - 1, -.5, 0),
+      bottomRightSkirt: new Vector3(.95 - 1, -.5, 0),
+      armStart: new Vector3(.75 - 1, 0, 0),
+      leftElbow: new Vector3(.62 - 1, -.05, 0),
+      rightElbow: new Vector3(.88 - 1, -.05, 0),
+      leftArm: new Vector3(.67 - 1, -.15, 0),
+      rightArm: new Vector3(.83 - 1, -.15, 0),
+
+   };
+
+
+   function drawWife(g, wife){
+      g.strokeStyle = 'black';
+      
+      var px = viewTransform(wife.head);
+      viewTransformMove(wife.head, g);
+      g.beginPath();
+      g.arc(px.x, px.y, 20, 0, 2 * Math.PI);
+
+      viewTransformMove(wife.neck, g);
+      viewAndDraw(wife.waist, g);
+
+      px = viewTransform(wife.waist);
+      var px2 = viewTransform(wife.bottomLeftSkirt);
+      viewTransformMove(wife.waist, g);
+      g.arcTo(px2.x, px.y, px2.x, px2.y, 60);
+      viewAndDraw(wife.bottomLeftSkirt, g);
+
+      px = viewTransform(wife.waist);
+      var px2 = viewTransform(wife.bottomRightSkirt);
+      viewTransformMove(wife.waist, g);
+      g.arcTo(px2.x, px.y, px2.x, px2.y, 60);
+      viewAndDraw(wife.bottomRightSkirt, g);
+
+      viewTransformMove(wife.bottomLeftSkirt, g);
+      viewAndDraw(wife.bottomRightSkirt, g);
+
+      
+      //left arm
+      viewTransformMove(wife.armStart, g);
+      viewAndDraw(wife.leftElbow, g);
+      viewAndDraw(wife.leftArm, g);
+
+      // right arm
+      viewTransformMove(wife.armStart, g);
+      viewAndDraw(wife.rightElbow, g);
+      viewAndDraw(wife.rightArm, g);
+
+
+      g.stroke();
+   }
+
+   var groom = {
+      head: new Vector3(1.25 - 1, .19, 0),
+      neck: new Vector3(1.25 - 1, .12, 0),
+      waist: new Vector3(1.25 - 1, -.17, 0),
+      bottomLeftPant: new Vector3(1.10 - 1, -.5, 0),
+      bottomRightPant: new Vector3(1.35 - 1, -.5, 0),
+      armStart: new Vector3(1.25 - 1, 0, 0),
+      leftElbow: new Vector3(1.10 - 1, -.05, 0),
+      rightElbow: new Vector3(1.35 - 1, -.05, 0),
+      leftArm: new Vector3(1.17 - 1, -.15, 0),
+      rightArm: new Vector3(1.33 - 1, -.15, 0),
+   };
+
+   function drawGroom(g, groom){
+      g.strokeStyle = 'black';
+      
+      var px = viewTransform(groom.head);
+      viewTransformMove(groom.head, g);
+      g.beginPath();
+      g.arc(px.x, px.y, 20, 0, 2 * Math.PI);
+
+      viewTransformMove(groom.neck, g);
+      viewAndDraw(groom.waist, g);
+
+      //legs
+      viewAndDraw(groom.bottomLeftPant, g);
+      viewTransformMove(groom.waist, g)
+      viewAndDraw(groom.bottomRightPant, g);
+      
+      //left arm
+      viewTransformMove(groom.armStart, g);
+      viewAndDraw(groom.leftElbow, g);
+      viewAndDraw(groom.leftArm, g);
+
+      // right arm
+      viewTransformMove(groom.armStart, g);
+      viewAndDraw(groom.rightElbow, g);
+      viewAndDraw(groom.rightArm, g);
+
+
+      g.stroke();
+   }
+
+
+
+   
+   canvas.update = function(g) {
+
+      // YOU ARE GOING TO REPLACE THE CODE BELOW.
+
+      var x = this.cursor.x,
+          y = this.cursor.y;
+
+      g.strokeStyle = 'black';
+      g.strokeRect(1, 1, this.width-2, this.height-2);
+
+
+      rotateBox(x, y);
+
+      var rotatedBride = rotate(wife, x, y);
+      rotatedBride = scale(wife, y);
+      var rotatedGroom = rotate(groom, x, y);
+      rotatedGroom = scale(groom, y);
+
+      drawWife(g, rotatedBride);
+
+      drawGroom(g, rotatedGroom);
+
+      var rotatedChuppa = scale(boxRotate2, y);
+
+      rotatedChuppa = perspective(rotatedChuppa, y);
+
+      drawChuppa(g, rotatedChuppa);
+
+
+
+   }
+</script>
+
