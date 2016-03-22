@@ -109,48 +109,49 @@ Here is my next cool homework, and this is my even more excellent example:
       bbl: new Vector3(-.5, -.5, -.5) // back bottom left
    }
 
-   function rotateBox(x, y){
-      matrix.rotateY(box.ftl, boxRotate1.ftl, (x * 360) / WIDTH);
-      matrix.rotateY(box.ftr, boxRotate1.ftr, (x * 360) / WIDTH);
-      matrix.rotateY(box.fbr, boxRotate1.fbr, (x * 360) / WIDTH);
-      matrix.rotateY(box.fbl, boxRotate1.fbl, (x * 360) / WIDTH);
-      matrix.rotateY(box.btl, boxRotate1.btl, (x * 360) / WIDTH);
-      matrix.rotateY(box.btr, boxRotate1.btr, (x * 360) / WIDTH);
-      matrix.rotateY(box.bbr, boxRotate1.bbr, (x * 360) / WIDTH);
-      matrix.rotateY(box.bbl, boxRotate1.bbl, (x * 360) / WIDTH);
-      
-      matrix.rotateX(boxRotate1.ftl, boxRotate2.ftl, 60);
-      matrix.rotateX(boxRotate1.ftr, boxRotate2.ftr, 60);
-      matrix.rotateX(boxRotate1.fbr, boxRotate2.fbr, 60);
-      matrix.rotateX(boxRotate1.fbl, boxRotate2.fbl, 60);
-      matrix.rotateX(boxRotate1.btl, boxRotate2.btl, 60);
-      matrix.rotateX(boxRotate1.btr, boxRotate2.btr, 60);
-      matrix.rotateX(boxRotate1.bbr, boxRotate2.bbr, 60);
-      matrix.rotateX(boxRotate1.bbl, boxRotate2.bbl, 60);
+   function rotateY(obj, x, y){
+      var x = x / WIDTH;
+      var tempObj = {};
+      for (var key in obj){
+          if (obj.hasOwnProperty(key)) {
+            tempObj[key] = new Vector3 (0, 0, 0);
+            matrix.rotateY(obj[key], tempObj[key], x);
+          }
+      }
+      return tempObj;
    }
 
+   function rotateX(obj, x, y){
+      var y = y / WIDTH;
+      var tempObj = {};
+      for (var key in obj){
+          if (obj.hasOwnProperty(key)) {
+            tempObj[key] = new Vector3 (0, 0, 0);
+            matrix.rotateX(obj[key], tempObj[key], y);
+          }
+      }
+      return tempObj;
+   }
       
 
 
-
-
+   function viewAndDraw(point, g){
+      var px = {};
+      point.viewportTransform(WIDTH, HEIGHT, px);
+      g.lineTo(px.x, px.y);
+   }
+   function viewTransform(point){
+      var px = {};
+      point.viewportTransform(WIDTH, HEIGHT, px);
+      return px;
+   }
+   function viewTransformMove(point, g){
+      var px = {};
+      point.viewportTransform(WIDTH, HEIGHT, px);
+      g.moveTo(px.x, px.y);
+   }
 
    function createBox(g, box){
-      function viewAndDraw(point){
-         var px = {};
-         point.viewportTransform(WIDTH, HEIGHT, px);
-         g.lineTo(px.x, px.y);
-      }
-      function viewTransform(point){
-         var px = {};
-         point.viewportTransform(WIDTH, HEIGHT, px);
-         return px;
-      }
-      function viewTransformMove(point, g){
-         var px = {};
-         point.viewportTransform(WIDTH, HEIGHT, px);
-         g.moveTo(px.x, px.y);
-      }
       // px = {};
       g.strokeStyle='red';
       g.beginPath();
@@ -158,31 +159,31 @@ Here is my next cool homework, and this is my even more excellent example:
       g.moveTo(px.x, px.y);
 
       //front
-      viewAndDraw(box.ftr);
-      viewAndDraw(box.fbr);
-      viewAndDraw(box.fbl);
-      viewAndDraw(box.ftl);
+      viewAndDraw(box.ftr, g);
+      viewAndDraw(box.fbr, g);
+      viewAndDraw(box.fbl, g);
+      viewAndDraw(box.ftl, g);
 
       //back
       px = viewTransform(box.btl);
       g.moveTo(px.x, px.y)
-      viewAndDraw(box.btr);
-      viewAndDraw(box.bbr);
-      viewAndDraw(box.bbl);
-      viewAndDraw(box.btl);
+      viewAndDraw(box.btr, g);
+      viewAndDraw(box.bbr, g);
+      viewAndDraw(box.bbl, g);
+      viewAndDraw(box.btl, g);
 
       //connect front to back
       viewTransformMove(box.ftr, g);
-      viewAndDraw(box.btr);
+      viewAndDraw(box.btr, g);
 
       viewTransformMove(box.ftl, g);
-      viewAndDraw(box.btl);
+      viewAndDraw(box.btl, g);
 
       viewTransformMove(box.fbr, g);
-      viewAndDraw(box.bbr);
+      viewAndDraw(box.bbr, g);
 
       viewTransformMove(box.fbl, g);
-      viewAndDraw(box.bbl);
+      viewAndDraw(box.bbl, g);
 
       g.stroke();
    }
@@ -203,9 +204,10 @@ Here is my next cool homework, and this is my even more excellent example:
       g.strokeStyle = 'black';
       g.strokeRect(1, 1, this.width-2, this.height-2);
 
-      rotateBox(x, y);
+      var rotated = rotateX(box, x, y);
+      rotated = rotateY(rotated, x, y);
 
-      createBox(g, boxRotate2);
+      createBox(g, rotated);
 
       // var diameter = 100 * (1 + .1 * Math.sin(time * 10));
       // g.fillStyle = this.cursor.z ? 'red' : 'rgb(0,0,128)';
