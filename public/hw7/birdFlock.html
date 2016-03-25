@@ -16,6 +16,9 @@
    <input type="radio" name="speed" value="3" onclick="changeSpeed(this.value)"> Chased<br>
    <input type="radio" name="speed" value="2" onclick="changeSpeed(this.value)"> Regular<br>
    <input type="radio" name="speed" value="2" onclick="soar()"> Soar<br>
+   <input type="radio" name="speed" value='right' onclick="tiltBird(this.value)"> Tilt Right<br>
+   <input type="radio" name="speed" value='left' onclick="tiltBird(this.value)"> Tilt Left<br>
+   <input type="radio" name="speed" value='' onclick="tiltBird(this.value)"> No Tilt<br>
 </form>
 <i></i>
 
@@ -88,6 +91,19 @@
       SOARING2 = -.2;
    }
 
+   var tilt = 0;
+   function tiltBird(side){
+      if (side === 'right'){
+         tilt = -.4;
+      }
+      else if (side == 'left') {
+         tilt = .4;
+      }
+      else {
+         tilt = 0;
+      }
+   }
+
    var SOARING = 1;
    var SOARING2 = 1;
 
@@ -120,6 +136,15 @@
                // angle1 = .3;
                // angle2 = -.2;
 
+
+               //move birds if tilt
+               if (tilt > 0){
+                  birds[i].x -= .0005;
+               }
+               else if (tilt < 0){
+                  birds[i].x += .0005;  
+               }
+
                matrix.identity();
 
                g.lineJoin = 'round';
@@ -143,8 +168,9 @@
 
                lineTo( 0, 0, 0);
                */
+
                //ALSO WORKS:
-               matrix.rotateZ(angle1 * side);
+               matrix.rotateZ(angle1 * side + tilt);
                matrix.perspective(0, 0,  -.1);
                lineTo( .4 * side, 0, birds[i].z);
                matrix.translate( .4 * side, 0, birds[i].z);
