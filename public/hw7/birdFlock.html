@@ -1,0 +1,167 @@
+
+<b><a href=http://www.w3schools.com/tags/ref_canvas.asp target=1>
+<big>HTML5 Canvas Reference is here</big></a></b>
+
+<p>
+<p>
+
+<center>
+<table>
+<tr>
+<td>
+<center>
+<canvas id=canvas1 width=400 height=400></canvas>
+<p>
+<form id="form">
+   <input type="radio" name="speed" value="3" onclick="changeSpeed(this.value)"> Chased<br>
+   <input type="radio" name="speed" value="2" onclick="changeSpeed(this.value)"> Regular<br>
+   <input type="radio" name="speed" value="2" onclick="soar()"> Soar<br>
+</form>
+<i></i>
+
+</center>
+</td>
+</tr>
+</table>
+<p>
+</center>
+<p>
+
+<script src=utility.js></script>
+<script src=drawlib1.js></script>
+<script src=matrix.js></script>
+
+<script>
+
+   var canvas;
+
+   var matrix = new Matrix();
+
+   var pt0 = new Vector3(-1, 0, 0);
+   var pt1 = new Vector3( 1, 0, 0);
+   var tmp = new Vector3( 0, 0, 0);
+
+   var pix0 = new Vector3(0, 0, 0);
+   var pix1 = new Vector3(0, 0, 0);
+
+   function moveTo(x, y, z) {
+      pt0.set(x, y, z);
+      matrix.transform(pt0, tmp);
+      tmp.viewportTransform(width, height, pix0);
+      g.moveTo(pix0.x, pix0.y);
+   }
+
+   function lineTo(x, y, z) {
+      pt0.set(x, y, z);
+      matrix.transform(pt0, tmp);
+      tmp.viewportTransform(width, height, pix0);
+      g.lineTo(pix0.x, pix0.y);
+   }
+
+   var g;
+   var width;
+   var height;
+
+   var birds = [];
+   var NUMBIRDS = 5;
+   function initializeBirds(){
+      for (var numBirds = 0; numBirds < NUMBIRDS; numBirds++){
+         birds[numBirds] = {
+            x: Math.random() * 2 - 1,
+            y: Math.random() * 2 - 1,
+            z: Math.random() * 9 - 10,
+            offset: Math.random() * 5
+         }
+      }
+      console.log(birds);
+   }
+
+   var FLAPSPEED = 2;
+   function changeSpeed(speed){
+      FLAPSPEED = speed;
+      SOARING = 1;
+      SOARING2 = 1;
+   }
+
+   function soar(){
+      SOARING = .1;
+      SOARING2 = -.2;
+   }
+
+   var SOARING = 1;
+   var SOARING2 = 1;
+
+   initializeBirds();
+
+   canvas = initCanvas('canvas1');
+   canvas.update = function(_g) {
+      g = _g;
+      width = canvas.width;
+      height = canvas.height;
+
+      // OUTLINE AROUND CANVAS
+
+      g.lineWidth = 2;
+      g.strokeStyle = 'black';
+      g.beginPath();
+      g.moveTo(0, 0);
+      g.lineTo(width, 0);
+      g.lineTo(width, height);
+      g.lineTo(0, height);
+      g.lineTo(0, 0);
+      g.stroke();
+
+      // CREATES BIRDS
+      for (var i = 0; i < birds.length; i++){
+         for (var side = -1 ; side <= 1 ; side += 2) {
+               var angle1 =  .3 + .7 * Math.cos(3 * time * FLAPSPEED + birds[i].offset) * SOARING;
+               var angle2 = -.5 + .5 * Math.sin(3 * time * FLAPSPEED + birds[i].offset) * SOARING2;
+
+               // angle1 = .3;
+               // angle2 = -.2;
+
+               matrix.identity();
+
+               g.lineJoin = 'round';
+               g.lineCap = 'round';
+               g.beginPath();
+
+               
+               matrix.translate(birds[i].x, birds[i].y + Math.sin(time + birds[i].offset) / 6, birds[i].z); // CHANGE THE POSITION OF THE BIRD
+               
+               moveTo( 0, 0, birds[i].z);
+
+               
+               /*
+               matrix.rotateZ(angle1 * side);
+               matrix.translate( .4 * side, 0, 0);
+
+               lineTo( 0, 0, 0);
+
+               matrix.rotateZ(angle2 * side);
+               matrix.translate( .4 * side, 0, 0);
+
+               lineTo( 0, 0, 0);
+               */
+               //ALSO WORKS:
+               matrix.rotateZ(angle1 * side);
+               matrix.perspective(0, 0,  -.1);
+               lineTo( .4 * side, 0, birds[i].z);
+               matrix.translate( .4 * side, 0, birds[i].z);
+
+               matrix.rotateZ(angle2 * side);
+               
+               matrix.perspective(0, 0, -.1);
+               lineTo( .4 * side, 0, birds[i].z);
+               matrix.translate( .4 * side, 0, birds[i].z);
+               
+               var lineWidth = 1;
+
+               g.lineWidth = lineWidth * (10 + birds[i].z);
+               g.strokeStyle = 'black';
+               g.stroke();
+         }
+      }
+   }
+</script>
+
