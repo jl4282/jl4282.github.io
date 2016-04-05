@@ -1,16 +1,54 @@
+Move the sliders on the bottom to alter the shape of the object. When the object is done, click "Create object" to add it to the scene. Click the checkboxes to rotate the scene. Clicking on an object list will delete the object from the scene and become the workable object.
 
-<b><a href=http://www.w3schools.com/tags/ref_canvas.asp target=1>
-<big>HTML5 Canvas Reference is here</big></a></b>
-
-<p>
-<p>
-
-<center>
 <table>
 <tr>
 <td>
-<center>
-<canvas id=canvas1 width=400 height=400></canvas>
+
+<canvas id=canvas1 width=400 height=400 style="display: inline-block;"></canvas>
+<div style="display: inline-block">
+   <ul id="items">
+      
+   </ul>
+</div>
+<div>
+   Rotations:
+   <input type="checkbox" value="x" onclick="changeRotation(this.value)"> Rotate X Axis
+   <input type="checkbox" value="y" onclick="changeRotation(this.value)"> Rotate Y Axis
+   <input type="checkbox" value="z" onclick="changeRotation(this.value)"> Rotate Z Axis
+</div>
+<button onclick="createObject()">Create Object</button>
+<form>
+  
+   <div>
+      # Vertices: <input id = "vertices" type="range" name="vertices" min="5" max="40">
+      Scale: <input id="scale" type="range" name="scale" value = "6" min="0" max="10">
+   </div>
+  <div>
+     <input type="radio" name="shape" value="0" onclick="changeShape(this.value)"> Torus (Bagel)<br>
+     <input type="radio" name="shape" value="1" onclick="changeShape(this.value)"> Sphere<br>
+     <input type="radio" name="shape" value="2" onclick="changeShape(this.value)"> Tube<br>
+     <input type="radio" name="shape" value="3" onclick="changeShape(this.value)"> Cone<br>
+     <!-- <input type="radio" name="shape" value="4" onclick="changeShape(this.value)"> X<br> -->
+  </div>
+   <!-- Object specific... -->
+   <div>
+      Thickness: <input id="thickness" type="range" name="thickness" value = "30" min="0" max="100" onchange="changeInput(this.value, this.name)">
+      Theta: <input id="theta" type="range" name="theta" value = "100" min="0" max="100" onchange="changeInput(this.value, this.name)">
+      Phi: <input id="phi" type="range" name="phi" value = "100" min="0" max="100" onchange="changeInput(this.value, this.name)">
+      Displacement Speed: <input id="speed" type="range" name="speed" value = "1" min="0" max="100" onchange="changeInput(this.value, this.name)" >
+      Displacement: <input id="displacement" type="range" name="displacement" value = "1" min="0" max="100" onchange="changeInput(this.value, this.name)">
+   </div>
+   <!-- Rotation -->
+      Rotate X Axis <input id="rotateX" type="range" name="rotateX" value = "1" min="0" max="359" onchange="changeInput(this.value, this.name)">
+      Rotate Y Axis <input id="rotateY" type="range" name="rotateY" value = "1" min="0" max="359" onchange="changeInput(this.value, this.name)">
+      Rotate Z Axis <input id="rotateZ" type="range" name="rotateZ" value = "1" min="0" max="359" onchange="changeInput(this.value, this.name)">
+      <br>
+      Move X Axis <input id="moveX" type="range" name="moveX" value = "0" min="-100" max="100" onchange="changeInput(this.value, this.name)">
+      Move Y Axis <input id="moveY" type="range" name="moveY" value = "0" min="-100" max="100" onchange="changeInput(this.value, this.name)">
+      Move Z Axis <input id="moveZ" type="range" name="moveZ" value = "0" min="-100" max="100" onchange="changeInput(this.value, this.name)">
+   <div>
+   </div>
+</form>
 <p>
 
 <i></i>
@@ -28,6 +66,11 @@
 <script src=matrix.js></script>
 
 <script>
+
+/*
+   - Two globes for eyes and track the cursor with rotation?
+*/
+
    var canvas;
 
    var matrix = new Matrix();
@@ -38,6 +81,65 @@
 
    var pix0 = new Vector3(0, 0, 0);
    var pix1 = new Vector3(0, 0, 0);
+
+   var objects = [];
+   var totalObjects = 0;
+
+   function createObject(){
+      var temp = {};
+      for (field in parameters){
+         temp[field] = parameters[field];
+      }
+      objects.push({
+         parameters : temp,
+         shape : currentShape,
+         vertices : document.getElementById('vertices').value,
+         scale : document.getElementById('scale').value / 10,
+         totalObjects : ++totalObjects
+      });
+      var textNode = document.createTextNode('Object '  + totalObjects);
+      var listNode = document.createElement('li');
+      listNode.setAttribute('value', totalObjects);
+      listNode.setAttribute('onclick', 'selectElement(this.value)');
+      listNode.setAttribute('id', 'object' + totalObjects);
+      listNode.appendChild(textNode);
+      document.getElementById('items').appendChild(listNode);
+
+   }
+
+   function selectElement(value){
+      for (var i = 0; i < objects.length; i ++){
+         if (objects[i].totalObjects === value){
+            var temp = {};
+            for (field in parameters){
+               temp[field] = objects[i].parameters[field];
+               if (objects[i].parameters[field])
+                  document.getElementById(field).value = objects[i].parameters[field] * 100;
+            }
+            parameters = temp;
+            objects.splice(i, 1);
+            document.getElementById('items').removeChild(document.getElementById('object' + value));
+         }
+      }
+   }
+
+   var parameters = {
+      thickness : .3,
+      theta : 1,
+      phi : 1,
+      speed : .1,
+      displacement : .1,
+      rotateX : 0,
+      rotateY : 0,
+      rotateZ : 0,
+      moveX : 0,
+      moveY : 0,
+      moveZ : 0
+   }
+
+   function changeInput(value, param){
+      parameters[param] = value / 100;
+   }
 
    function moveTo(p) {
       pt0.set(p[0], p[1], p[2]);
@@ -58,6 +160,111 @@
       moveTo(x, y, z);
       lineTo(x, y, z + .001);
       g.stroke();
+   }
+
+   var currentShape = 0;
+   var shapes = [torus, globe, tube, cone, weirdShape];
+
+   function changeShape(number){
+      currentShape = number;
+   }
+
+   var rotations = {
+      x : false,
+      y : false,
+      z : false
+   };
+
+   function changeRotation(rotation){
+      rotations[rotation] = !rotations[rotation];
+   }
+
+   function tube(u, v, parameters) {
+      var theta = 2 * Math.PI * u * parameters.theta;
+      var phi   = 2 * Math.PI * v * parameters.phi;
+      var radius = 1 * parameters.thickness;
+      var speed = parameters.speed;
+      var displacement = parameters.displacement;
+      radius *= 1 + displacement * Math.sin(30 * (v + speed * time));
+      radius *= 1 + displacement * Math.sin(40 * (u + speed * time));
+      return [
+        radius * Math.cos(theta),
+        radius * Math.sin(theta),
+        2 * v - 1
+      ];
+   }
+
+   function cone(u, v, parameters){
+      var theta = 2 * Math.PI * u * parameters.theta;
+      var phi   = v * parameters.phi;
+      var radius = phi * parameters.thickness;
+      var speed = parameters.speed;
+      var displacement = parameters.displacement;
+      radius *= 1 + displacement * Math.sin(30 * (v + speed * time));
+      radius *= 1 + displacement * Math.sin(40 * (u + speed * time));
+      return [
+        radius * Math.sin(theta),
+        radius * Math.cos(theta),
+        Math.sin(phi) //theta's also really interesting
+      ];
+   }
+
+   function weirdShape(u, v){
+      if (u < .5){
+         u = -u;
+      }
+      if (v < .5){
+         v = - v;
+      }
+      t = v;
+      if (t < .5) t = -t;
+      return [
+        v * Math.sin(u),
+        u * Math.cos(v),
+        t + u 
+      ];
+      // var theta = 10 * Math.PI * u;
+      // var phi   = 2 * Math.PI * v;
+      // var radius = 1;
+      // return [
+      //   radius * Math.floor(Math.cos(theta)),
+      //   radius * Math.floor(Math.sin(-theta)),
+      //   // 2 * v - 1 * Math.sin(theta)
+      //   Math.sin(theta)
+      // ];
+   }
+
+   function globe(u, v, parameters) {
+      var theta = 2 * Math.PI * u * parameters.theta;
+      var phi   = 2 * Math.PI * (v - .5) * parameters.phi;
+      var radius = Math.cos(phi) * parameters.thickness;
+      var speed = parameters.speed;
+      var displacement = parameters.displacement;
+      radius *= 1 + displacement * Math.sin(30 * (v + speed * time));
+      radius *= 1 + displacement * Math.sin(40 * (u + speed * time));
+      return [
+        radius * Math.cos(theta),
+        radius * Math.sin(theta),
+        Math.sin(phi)
+      ];
+   }
+
+   function torus(u, v, parameters) {
+      var r = parameters.thickness;
+      // var r = 0.3; //thickness of the torus
+
+      var speed = parameters.speed;
+      var displacement = parameters.displacement;
+      r *= 1 + displacement * Math.sin(2 * Math.PI *  speed * (v + .3 * time)); // oscillating along z axis?
+      r *= 1 + displacement * Math.sin(2 * Math.PI * speed * (u + .2 * time)); //oscillating along y axis
+
+      var theta = 2 * Math.PI * u * parameters.theta;
+      var phi   = 2 * Math.PI * v * parameters.phi;
+      return [
+         Math.cos(theta) * (1 + r * Math.cos(phi)),
+         Math.sin(theta) * (1 + r * Math.cos(phi)),
+         r * Math.sin(phi)
+      ];
    }
 
    function drawUnitSquare() {
@@ -95,69 +302,75 @@
       g.stroke();
 
       matrix.identity();
-      matrix.scale(.6);
+      matrix.scale(document.getElementById('scale').value / 10);
       matrix.perspective(0, 0, -.1);
-      matrix.rotateY(time);
+      
+
+      matrix.rotateX(parameters.rotateX);
+      matrix.rotateY(parameters.rotateY);
+      matrix.rotateZ(parameters.rotateZ);
+
+
+      if (rotations.y){
+         matrix.rotateY(time);   
+      }
+      if (rotations.x){
+         matrix.rotateX(time);
+      }
+      if (rotations.z){
+         matrix.rotateZ(time);
+      }
+
+      matrix.translate(parameters.moveX, parameters.moveY, parameters.moveZ);
+
 
       g.lineJoin = 'round';
       g.lineCap = 'round';
 
-      function tube(u, v) {
-         var theta = 2 * Math.PI * u;
-         var phi   = 2 * Math.PI * v;
-      	var radius = 1;
-         return [
-      	  radius * Math.cos(theta),
-      	  radius * Math.sin(theta),
-      	  2 * v - 1
-      	];
-      }
-
-      function globe(u, v) {
-         var theta = 2 * Math.PI * u;
-         var phi   = Math.PI * (v - .5);
-      	var radius = Math.cos(phi);
-      	//radius *= 1 + .1 * Math.sin(30 * (v + .3 * time));
-      	//radius *= 1 + .1 * Math.sin(40 * (u + .2 * time));
-         return [
-      	  radius * Math.cos(theta),
-      	  radius * Math.sin(theta),
-      	  Math.sin(phi)
-         ];
-      }
-
-      function torus(u, v) {
-         var r = 0.3;
-
-      	r *= 1 + .1 * Math.sin(2 * Math.PI *  7 * (v + .3 * time));
-      	r *= 1 + .1 * Math.sin(2 * Math.PI * 10 * (u + .2 * time));
-
-         var theta = 2 * Math.PI * u;
-         var phi   = 2 * Math.PI * v;
-         return [
-            Math.cos(theta) * (1 + r * Math.cos(phi)),
-            Math.sin(theta) * (1 + r * Math.cos(phi)),
-            r * Math.sin(phi)
-      	];
-      }
-
-      var nv = 60, nu = 2 * nv;
+      var nv = document.getElementById('vertices').value;
+      var nu = 2 * nv;
 
       g.lineWidth = 1;
+      g.strokeStyle = 'red';
       for (var u = 0 ; u < 1 ; u += 1 / nu)
       for (var v = 0 ; v < 1 ; v += 1 / nv) {
-/*         
-         var theta = 2 * Math.PI * u;
-         var x = Math.cos(theta);
-	 var y = 2 * v - 1;
-         var z = Math.sin(theta);
-	 drawDot(x, y, z);
-*/
          g.beginPath();
-         moveTo(torus(u, v));
-         lineTo(torus(u + 1 / nu, v));
-         lineTo(torus(u + 1 / nu, v + 1 / nv));
-         lineTo(torus(u, v + 1 / nv));
+         moveTo(shapes[currentShape](u, v, parameters));
+         // change order to get something great
+         lineTo(shapes[currentShape](u + 1 / nu, v, parameters));
+         lineTo(shapes[currentShape](u + 1 / nu, v + 1 / nv, parameters));
+         lineTo(shapes[currentShape](u, v + 1 / nv, parameters));
+         g.stroke();
+      }
+      /* Drawing Objects */
+      g.strokeStyle = 'black';
+      for (var i in objects)
+      for (var u = 0 ; u < 1 ; u += 1 / nu)
+      for (var v = 0 ; v < 1 ; v += 1 / nv) {
+         matrix.identity();
+         matrix.scale(objects[i].scale);
+         matrix.perspective(0, 0, -.1);
+         matrix.rotateX(objects[i].parameters.rotateX);
+         matrix.rotateY(objects[i].parameters.rotateY);
+         matrix.rotateZ(objects[i].parameters.rotateZ);
+         if (rotations.y){
+            matrix.rotateY(time);   
+         }
+         if (rotations.x){
+            matrix.rotateX(time);
+         }
+         if (rotations.z){
+            matrix.rotateZ(time);
+         }
+         matrix.translate(objects[i].parameters.moveX, objects[i].parameters.moveY, objects[i].parameters.moveZ);
+         var nv = objects[i].vertices;
+         var nu = 2 * nv;
+         g.beginPath();
+         moveTo(shapes[objects[i].shape](u, v, objects[i].parameters));
+         // change order to get something great
+         lineTo(shapes[objects[i].shape](u + 1 / nu, v, objects[i].parameters));
+         lineTo(shapes[objects[i].shape](u + 1 / nu, v + 1 / nv, objects[i].parameters));
+         lineTo(shapes[objects[i].shape](u, v + 1 / nv, objects[i].parameters));
          g.stroke();
       }
    }
