@@ -12,10 +12,12 @@
 <center>
 <canvas id=canvas1 width=400 height=400></canvas>
 <br>
-<input type="checkbox" onchange="handleClick('x')"> Cross Edges 
+<input type="checkbox" onchange="handleClick('z')"> Rotate Z 
+<br>
+<input type="checkbox" onchange="handleClick('x')"> Rotate X 
 
 <p>
-Bezier curves kinda making a sphere
+First attempt to make a sphere, which is arguably better than a regular sphere. Order of the rotations was wrong.</p> <p>Click the checkboxes to up the weirdness factor.</p>
 
 <i></i>
 
@@ -233,12 +235,14 @@ Bezier curves kinda making a sphere
             tmp2.w = 0;
             matrix.identity();
             // matrix.rotateY(Math.sin(time) * 2.5);
-            matrix.rotateY(rotationY);
-            matrix.rotateY(Math.sin(time) * 2);
+            if (rotate.z){
+               matrix.rotateZ(rotationX);   
+            }
             if (rotate.x){
                matrix.rotateX(rotationX);   
             }
-            
+            matrix.rotateY(rotationY);
+            matrix.rotateY(Math.sin(time) * 2);
             // matrix.rotateX(Math.sin(time) * 2.5);
             matrix.scale(scale);
             matrix.transform(tmp, tmp2);
