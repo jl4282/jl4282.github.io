@@ -116,7 +116,7 @@ Hermite Curve in red, Bezier curve in black.
 
       hermiteCurve._data = hermiteM;
       // hermiteCurve.rotateY(Math.sin(time));
-      hermiteCurve.scale(.5);
+      // hermiteCurve.scale(.5);
       // hermiteCurve.perspective(0, 0, 0);
 
       // for (var i in hermiteABCD){
@@ -126,10 +126,11 @@ Hermite Curve in red, Bezier curve in black.
          // matrix.transform(hermiteABCD[i].y, hermiteABCD[i].y);
       // }
 
-      var beginTime = 0, endTime = 10;
-      var t = (time - beginTime) / (endTime - beginTime);
+      // var beginTime = 0, endTime = .5;
+      // var t = (time - beginTime) / (endTime - beginTime);
 
-      // rotateFunction(t, hermiteABCD, hermiteCurve);
+
+      rotateFunction(hermiteABCD, hermiteCurve);
 
 
       abcd = getAbcd(hermiteABCD, hermiteCurve);
@@ -210,6 +211,11 @@ Hermite Curve in red, Bezier curve in black.
 
       bezierCurve._data = bezierM;
 
+      var beginTime = 0, endTime = 10;
+      var t = (time - beginTime) / (endTime - beginTime);
+
+      rotateFunction(bezierABCD, bezierCurve);
+
       var abcd = getAbcd(bezierABCD, bezierCurve);
       drawCurve(g, abcd);
 
@@ -253,9 +259,9 @@ Hermite Curve in red, Bezier curve in black.
 
 //failed attempt to rate function
 
-   function rotateFunction(t, segments, curve) {
-      var nt = Math.floor(segments.length * t);  // Which of four successive splines?
-      var ft = (segments.length * t) % 1.0; // Where am I right now in the current spline?
+   function rotateFunction(segments, curve) {
+      // var nt = Math.floor(segments.length * t);  // Which of four successive splines?
+      // var ft = (segments.length * t) % 1.0; // Where am I right now in the current spline?
       // curve.rotateX(nt/ft);
       // console.log(nt, ft);
 
@@ -277,21 +283,23 @@ Hermite Curve in red, Bezier curve in black.
 
       var matrix = new Matrix();
 
-      var hermiteM = [[2, -2, 1, 1], [-3, 3, -2, -1], [0, 0, 1, 0], [1, 0, 0, 0]];
+      // var hermiteM = [[2, -2, 1, 1], [-3, 3, -2, -1], [0, 0, 1, 0], [1, 0, 0, 0]];
 
-      matrix._data = hermiteM;
+      // matrix._data = hermiteM;
       // matrix.identity();
-      console.log('before ', segments);
+      // console.log('before ', segments);
 
       for (var i in segments){
          s = segments[i];
          var dict = {'A':'x', 'B': 'y', 'C': 'z', 'D': 'w'};
          for (var i in dict){
-            var tmp = new Vector3(s.x[dict[i]], s.y[dict[i]], -10);
+            var tmp = new Vector3(s.x[dict[i]], s.y[dict[i]], 0);
             var tmp2 = new Vector3 (0, 0, 0);
             tmp2.w = 0;
-            matrix.rotateZ(Math.sin(time));
-            matrix.scale(.1);
+            matrix.identity();
+            matrix.rotateY(Math.sin(time) * 2.5);
+            matrix.rotateZ(Math.sin(time) * 2.5);
+            matrix.scale(.5);
             matrix.transform(tmp, tmp2);
             tmp3 = {};
             tmp2.viewportTransform(WIDTH, HEIGHT, tmp3);
@@ -303,7 +311,7 @@ Hermite Curve in red, Bezier curve in black.
          //rotate this temp around z axis (spinning effect)
 
       }
-      console.log('after ', segments);
+      // console.log('after ', segments);
          
       // }
 
@@ -362,8 +370,6 @@ Hermite Curve in red, Bezier curve in black.
       g.strokeStyle = 'red';
       // Draw Bezier Curve
       drawHermiteCurve(g);
-
-
       
    }
 </script>
