@@ -12,6 +12,7 @@
 <center>
 <canvas id=canvas1 width=400 height=400></canvas>
 <p>
+Hermite Curve in red, Bezier curve in black.
 
 <i></i>
 
@@ -116,11 +117,24 @@
       hermiteCurve._data = hermiteM;
       // hermiteCurve.rotateY(Math.sin(time));
       hermiteCurve.scale(.5);
+      // hermiteCurve.perspective(0, 0, 0);
+
+      // for (var i in hermiteABCD){
+         // matrix.identity();
+         // matrix.rotateX(Math.sin(time));
+         // matrix.transform(hermiteABCD[i].x, hermiteABCD[i].x);
+         // matrix.transform(hermiteABCD[i].y, hermiteABCD[i].y);
+      // }
+
+      var beginTime = 0, endTime = 10;
+      var t = (time - beginTime) / (endTime - beginTime);
+
+      // rotateFunction(t, hermiteABCD, hermiteCurve);
+
 
       abcd = getAbcd(hermiteABCD, hermiteCurve);
 
       // draw hermite curve
-      
       drawCurve(g, abcd);
 
    }
@@ -141,19 +155,53 @@
       };
       var bezierABCD = [{x: XABCD, y: YABCD}];
 
-      // XABCD = {
-      //    x : .55,
-      //    y : 1.99, 
-      //    z : .37,
-      //    w : .08 
-      // };
-      // // for the y values of the curve
-      // YABCD = {
-      //    x : .12,
-      //    y : .85,
-      //    z : 1.27, 
-      //    w : .3
-      // };
+      
+
+      /*
+      
+      - C to D needs to have same slope as A to B
+      - D and A need to be in same spot
+
+            y2 - y1
+      m =   -------
+            x2 - x1
+
+      y2 - y1 = m(x2 - x1)
+
+      y2 = y1 + m(x2 + x1)
+
+      x2 = x1 + m(y2 + y1)
+
+      */
+
+      mCD = (YABCD.w - YABCD.z) / (XABCD.w - XABCD.z);
+      // console.log(mCD, YABCD.w + (mCD * (.8 + XABCD.w)));
+
+      // determine whether x or y is dynamic based on which way the curve is pointing
+
+      // if curve pointing down or up, then vary the y coord
+
+
+// not right...
+
+      
+
+      var X2ABCD = {
+         x : XABCD.w,
+         y : XABCD.w + (mCD * (-.35 + YABCD.w)),
+         z : .37,
+         w : -.8 
+      };
+      // for the y values of the curve
+      var Y2ABCD = {
+         x : YABCD.w,
+         y : -.35,
+         z : -1.27, 
+         w : -.3
+      };
+
+
+      bezierABCD.push({x: X2ABCD, y: Y2ABCD});
 
 
 
@@ -182,7 +230,90 @@
 
    function calculate(abcd, t){
       return (abcd.x * Math.pow(t, 3)) + (abcd.y * Math.pow(t, 2)) + (abcd.z * t) + abcd.w;
-      // return t * (t * (abcd.x * t * abcd.y) + abcd.z) + abcd.w; //must have copied this wrong... :/
+   }
+
+
+
+   // m.rotateX(rotateFunction(t));
+
+// Various possible ways you can transform a matrix, parametrically over time.
+
+
+   // m.translate( /* SOMETHING */ , /* SOMETHING */, /* SOMETHING */ );
+   // m.rotateX( /* SOMETHING */ );
+   // m.rotateY( /* SOMETHING */ );
+   // m.rotateZ( /* SOMETHING */ );
+   // m.scale( /* SOMETHING */ );
+   // m.scale( /* SOMETHING */ , /* SOMETHING */ , /* SOMETHING */ );
+
+
+  
+// My rotate function might have an internal structure of,
+// for exammple, a four part spline.
+
+//failed attempt to rate function
+
+   function rotateFunction(t, segments, curve) {
+      var nt = Math.floor(segments.length * t);  // Which of four successive splines?
+      var ft = (segments.length * t) % 1.0; // Where am I right now in the current spline?
+      // curve.rotateX(nt/ft);
+      // console.log(nt, ft);
+
+      // for (var j in segments[nt].x){
+      //    segments[nt].x[j] *= Math.sin(ft);
+      //    segments[nt].y[j] *= Math.sin(ft);
+      // }
+         // for (var j in segments[i].y){
+         //    // segments[i].y[j] *= ft
+         // }
+
+
+      /*
+      for each x, y value need to get the x y value from the different objects, rotate the x,y coordinate and then place them back into the original arrays
+
+      */
+
+
+
+      var matrix = new Matrix();
+
+      var hermiteM = [[2, -2, 1, 1], [-3, 3, -2, -1], [0, 0, 1, 0], [1, 0, 0, 0]];
+
+      matrix._data = hermiteM;
+      // matrix.identity();
+      console.log('before ', segments);
+
+      for (var i in segments){
+         s = segments[i];
+         var dict = {'A':'x', 'B': 'y', 'C': 'z', 'D': 'w'};
+         for (var i in dict){
+            var tmp = new Vector3(s.x[dict[i]], s.y[dict[i]], -10);
+            var tmp2 = new Vector3 (0, 0, 0);
+            tmp2.w = 0;
+            matrix.rotateZ(Math.sin(time));
+            matrix.scale(.1);
+            matrix.transform(tmp, tmp2);
+            tmp3 = {};
+            tmp2.viewportTransform(WIDTH, HEIGHT, tmp3);
+            s.x[dict[i]] = tmp2.x;
+            s.y[dict[i]] = tmp2.y;            
+         }
+
+
+         //rotate this temp around z axis (spinning effect)
+
+      }
+      console.log('after ', segments);
+         
+      // }
+
+
+
+
+
+      // ...
+      
+      
    }
 
    function drawCurve(g, abcd){
@@ -191,7 +322,7 @@
          for (var t = 0; t <= 1; t += EPSILON){
             var y = calculate(abcd[i].y, t);
             var x = calculate(abcd[i].x, t);
-            var point = new Vector3(x, y, -10);
+            var point = new Vector3(x, y, -4);
             var pixel = {};
             point.viewportTransform(WIDTH, HEIGHT, pixel);
             pointsOnCurve.push(pixel);
@@ -208,6 +339,7 @@
 
    canvas = initCanvas('canvas1');
    canvas.update = function(_g) {
+
       g = _g;
       width = canvas.width;
       height = canvas.height;
@@ -227,14 +359,9 @@
       // Draw Hermite curve
       drawBezierCurve(g);
 
+      g.strokeStyle = 'red';
       // Draw Bezier Curve
-      // drawHermiteCurve(g);
-
-      
-
-
-
-
+      drawHermiteCurve(g);
 
 
       
