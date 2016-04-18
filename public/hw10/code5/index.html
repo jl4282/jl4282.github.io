@@ -44,6 +44,8 @@
    var rForearmJoint = rightArmJoint.addChild(new CT.Node().translate(.7,.3,0));
    var rightForearm = rForearmJoint.addChild(new CT.Cylinder());
    rightForearm.identity().translate(.0,0,0).scale(.1, .05, .3);
+   rightForearm.setColor(234 / 225, 192 / 225, 134 / 225);
+   rightArm.setColor(234 / 225, 192 / 225, 134 / 225);
 
    // left arm
    var leftArmJoint = root.addChild(new CT.Node());
@@ -52,6 +54,8 @@
    var lForearmJoint = leftArmJoint.addChild(new CT.Node().translate(-.7,.3,0));
    var leftForearm = lForearmJoint.addChild(new CT.Cylinder());
    leftForearm.identity().translate(.0,0,0).scale(.1, .05, .3);
+   leftForearm.setColor(234 / 225, 192 / 225, 134 / 225);
+   leftArm.setColor(234 / 225, 192 / 225, 134 / 225);
 
    // torso
    var torso = root.addChild(new CT.Cylinder());
@@ -68,6 +72,8 @@
    rKnee.identity().translate(.7, 0, 0);
    var rBLeg = rKnee.addChild(new CT.Cylinder());
    rBLeg.identity().translate(.35,-.19,0).rotateY(1.5).rotateX(.5).scale(.05,.05,.5);
+   rLeg.setColor(234 / 225, 192 / 225, 134 / 225);
+   rBLeg.setColor(234 / 225, 192 / 225, 134 / 225);
 
    // left leg
    var lHipJoint = root.addChild(new CT.Node());
@@ -78,6 +84,8 @@
    lKnee.identity().translate(.7, 0, 0);
    var lBLeg = lKnee.addChild(new CT.Cylinder());
    lBLeg.identity().translate(.4,.1, 0).rotateY(1.5).rotateX(-.3).scale(.05,.05,.5);
+   lLeg.setColor(234 / 225, 192 / 225, 134 / 225);
+   lBLeg.setColor(234 / 225, 192 / 225, 134 / 225);
 
 
 
