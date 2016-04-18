@@ -1,0 +1,115 @@
+<script src=CT_Modeler.js></script>
+
+<body bgcolor=white>
+<center>
+<canvas id='canvas1' width='480' height='480'></canvas>
+</center>
+</body>
+
+<script>
+   function getTime() { return (new Date()).getTime() / 1000; }
+
+   var scene = new CT.Scene(canvas1);
+   scene.setLight(0, [ 1, 1, 1]);
+   scene.setLight(1, [-1,-1,-1], [.1, .05, 0]);
+
+   var root = new CT.Node();
+   scene.add(root);
+/*
+   root.addChild(new CT.Torus(32, 16, .6));
+*/
+   //var shape1 = root.addChild(new CT.Cube());
+   var shape1 = root.addChild(new CT.Sphere());
+   shape1.translate(0,1,0).scale([.3,.3,.3]);
+   shape1.setColor(234 / 225, 192 / 225, 134 / 225);
+
+   shape1.setTexture('./face.png');
+
+   var neckJoint = root.addChild(new CT.Node());
+
+   var neck = neckJoint.addChild(new CT.Cylinder());
+   neck.translate(0, .6, 0).scale(.05, .1, .05);
+   neck.rotateY(1.5).rotateX(1.6);
+   neck.setColor(234 / 225, 192 / 225, 134 / 225);
+
+
+
+
+   
+
+   // right arm
+   var rightArmJoint = root.addChild(new CT.Node());
+   var rightArm = rightArmJoint.addChild(new CT.Cylinder());
+   rightArm.identity().translate(.3,0,0).rotateY(1.5).scale(.1, .05, .3);
+   var rForearmJoint = rightArmJoint.addChild(new CT.Node().translate(.7,.3,0));
+   var rightForearm = rForearmJoint.addChild(new CT.Cylinder());
+   rightForearm.identity().translate(.0,0,0).scale(.1, .05, .3);
+
+   // left arm
+   var leftArmJoint = root.addChild(new CT.Node());
+   var leftArm = leftArmJoint.addChild(new CT.Cylinder());
+   leftArm.identity().translate(-.3,0,0).rotateY(1.5).scale(.1, .05, .3);
+   var lForearmJoint = leftArmJoint.addChild(new CT.Node().translate(-.7,.3,0));
+   var leftForearm = lForearmJoint.addChild(new CT.Cylinder());
+   leftForearm.identity().translate(.0,0,0).scale(.1, .05, .3);
+
+   // torso
+   var torso = root.addChild(new CT.Cylinder());
+   torso.translate(0, 0, 0).scale(.05, .7, .05);
+   torso.rotateY(1.6).rotateX(1.6);
+   torso.setColor(234 / 225, 192 / 225, 134 / 225);
+
+   // right leg
+   var rHipJoint = root.addChild(new CT.Node());
+   var rLeg = rHipJoint.addChild(new CT.Cylinder());
+   rLeg.identity().translate(.3,0,0).rotateY(1.5).scale(.1,.05,.3);
+   rHipJoint.identity().translate(0, -.7, 0);
+   var rKnee = rHipJoint.addChild(new CT.Node());
+   rKnee.identity().translate(.7, 0, 0);
+   var rBLeg = rKnee.addChild(new CT.Cylinder());
+   rBLeg.identity().translate(.35,-.19,0).rotateY(1.5).rotateX(.5).scale(.05,.05,.5);
+
+   // left leg
+   var lHipJoint = root.addChild(new CT.Node());
+   var lLeg = lHipJoint.addChild(new CT.Cylinder());
+   lLeg.identity().translate(.3,0,0).rotateY(1.5).scale(.1,.05,.3);
+   lHipJoint.identity().translate(0, -.7, 0);
+   var lKnee = lHipJoint.addChild(new CT.Node());
+   lKnee.identity().translate(.7, 0, 0);
+   var lBLeg = lKnee.addChild(new CT.Cylinder());
+   lBLeg.identity().translate(.4,.1, 0).rotateY(1.5).rotateX(-.3).scale(.05,.05,.5);
+
+
+
+   // var shape3 = joint.addChild(new CT.Cylinder());
+   // shape3.identity().translate(0,-.5,0).rotateY(1.5).scale(.1, .1, .4);
+
+   var startTime = getTime();
+   (function update() {
+      CT.time = getTime() - startTime;
+
+      root.identity().scale(.3);
+      root.rotateY(CT.time);
+
+      // Right Arm
+      rightArmJoint.identity().translate(.08, .4, 0).rotateZ(Math.sin(CT.time));
+      rForearmJoint.identity().translate(.6,0,0).rotateZ(Math.max(Math.sin(CT.time), 0));
+      rightForearm.identity().translate(.3, 0, 0).rotateY(1.5).scale(.05, .05, .3);
+
+      //Left Arm
+      leftArmJoint.identity().translate(-.08, .4, 0).rotateZ(-Math.sin(CT.time));
+      lForearmJoint.identity().translate(-.6,0,0).rotateZ(-Math.max(Math.sin(CT.time), 0));
+      leftForearm.identity().translate(-.3, 0, 0).rotateY(1.5).scale(.05, .05, .3);
+
+      // Right leg
+      rHipJoint.identity().translate(0, -.7, 0).rotateZ(-1);
+
+      // Left leg
+      lHipJoint.identity().translate(0, -.7, 0).rotateZ(-2);
+
+      root.draw();
+
+      setTimeout(update, 1000 / 60);
+   })();
+</script>
+
