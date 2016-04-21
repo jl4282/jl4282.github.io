@@ -13,6 +13,7 @@
    var PI  = Math.PI;
    var cos = Math.cos;
    var sin = Math.sin;
+   var tan = Math.tan;
    var sample = function(S, t) {
       t = Math.max(0, Math.min(.999, t));
       var i = Math.floor((S.length-1) * t);
@@ -31,12 +32,12 @@
    root.scale(.2);
    scene.add(root);
 
-   root.addChild(new CT.Cube());
-   root.addChild(new CT.Cylinder(8));
-   root.addChild(new CT.Extruded(16, 100,
-      function(u,v){ v=.15+.06*cos(6*PI*v); u*=2*PI; return [v*cos(u),v*sin(u)] },         // PROFILE
-      function(v){v*=4*PI;var r=1+cos(1.5*v)/5;return[sin(1.5*v)/2,r*cos(v),r*sin(v)];})); // PATH
-   root.addChild(new CT.Parametric(20,20,function(u,v){return[2*u-1,2*v-1,.2*sin(9*u)*sin(9*v)];}));
+   // root.addChild(new CT.Cube());
+   // root.addChild(new CT.Cylinder(8));
+   // root.addChild(new CT.Extruded(16, 100,
+   //    function(u,v){ v=.15+.06*cos(6*PI*v); u*=2*PI; return [v*cos(u),v*sin(u)] },         // PROFILE
+   //    function(v){v*=4*PI;var r=1+cos(1.5*v)/5;return[cos(1.5*v)/2,r*tan(v/5),r*sin(v* 3)];})); // PATH
+   // root.addChild(new CT.Parametric(20,20,function(u,v){return[2*u-1,2*v-1,.2*sin(20*u)*sin(20*-v)];}));
    // var spline = [[.001,-1],[.5,-1],[.45,-.95],[.15,-.9],[.09,-.85],[.05,-.6],[.1,0],
    //               [.2,.1],[.4,.2],[.6,.5],[.5,.98],[.48,1],[.46,.98],[.55,.5],[.35,.3],[.001,.2]];
    var spline = [[0, 0], [.5, 0], [.6, .1], [.55, .1], [.6, .1], [.5, 0], [.01, .01]];
@@ -45,25 +46,25 @@
    root.addChild(new CT.Revolved(16, 64, function(t) { return sample(spline,t); }));
    var spline = [[0, 0], [.5, .0], [.5, .1], [.4, .02], [.4, 2], [.3, 2.3], [.3, 2.4], [.25, 2.6], [.2, 3.1], [.15, 3.7], [.1, 4], [.05, 4.2], [0, 4.4] ];
    root.addChild(new CT.Revolved(16, 64, function(t) { return sample(spline,t); }));
-   root.addChild(new CT.Torus(32, 16, .6));
+   // root.addChild(new CT.Torus(32, 16, .6));
 
    
    
    for (var i = 0 ; i < root.numChildren() ; i++)
       root.getChild(i).setColor(palette[i]);
-   root.getChild(0).setTexture('images/xy.png');
-   root.getChild(1).setFragmentShader(
-      ['precision highp float;'
-      ,'varying vec3 vNormal;'
-      ,'void main() { vec3 n = normalize(vNormal); gl_FragColor = vec4(n*n,1.); }'
-      ].join('\n')
-   );
-   root.getChild(4).setMetal(1, .4, .1);
-   root.getChild(5).setColor(1, 1, 1).setTexture('images/darkmarble.jpg');
-   root.getChild(6).setPhong([.1,.04,.01, 1,.4,.1, .2,.2,.2,5]).setTexture('images/bullet.jpg');
-   root.getChild(7).setPhong([.1,.04,.01, 1,.4,.1, .2,.2,.2,5])
-                   .setTexture('images/This_is_not_a_bagel.jpg')
-                   .setNormalMap('images/normal_map_2.jpg');
+   // root.getChild(0).setTexture('images/xy.png');
+   // root.getChild(1).setFragmentShader(
+   //    ['precision highp float;'
+   //    ,'varying vec3 vNormal;'
+   //    ,'void main() { vec3 n = normalize(vNormal); gl_FragColor = vec4(n*n,1.); }'
+   //    ].join('\n')
+   // );
+   root.getChild(0).setMetal(1, .4, .1);
+   root.getChild(1).setColor(1, 1, 1).setTexture('images/darkmarble.jpg');
+   root.getChild(2).setPhong([.1,.04,.01, 1,.4,.1, .2,.2,.2,5]).setTexture('images/bullet.jpg');
+   // root.getChild(4).setPhong([.1,.04,.01, 1,.4,.1, .2,.2,.2,5])
+                   // .setTexture('images/This_is_not_a_bagel.jpg')
+                   // .setNormalMap('images/normal_map_2.jpg');
 
    var startTime = getTime();
    (function update() {
@@ -74,7 +75,8 @@
       for (var i = 0 ; i < root.numChildren() ; i++)
          root.getChild(i).identity()
 	                 .translate(6*(i%4)-10, i<4?2:-2, 0).rotateY(t).rotateX(t/2);
-      root.getChild(4).scale(1.6);
+      root.getChild(2).scale(1.6);
+      root.getChild(0).scale(3.6);
 
       root.draw();
       setTimeout(update, 0);
