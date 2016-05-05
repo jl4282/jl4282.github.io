@@ -1,0 +1,285 @@
+<script src=CT_Modeler.js></script>
+
+<body bgcolor=black>
+<p id="test" style="color:white;"></p>
+<table width=100% cellpadding=0 cellspacing=0>
+<tr>
+<td><canvas id='canvas1' width=1280 height=760></canvas>
+</tr>
+</table>
+</body>
+
+<script>
+   var imu = { direction:0, tiltFB:0, tiltLR:0 }; // IF BROWSER SUPPORTS PHONE
+   if (window.DeviceOrientationEvent) {           // ORIENTATION, ADD LISTENER.
+     window.addEventListener( 'deviceorientation', function(event) {
+        imu.direction = event.alpha;              // PHONE DIRECTION IN DEGREES
+        imu.tiltFB    = event.beta;               // TILT FRONT-BACK IN DEGREES
+        imu.tiltLR    = event.gamma;              // TILT LEFT-RIGHT IN DEGREES
+     });
+   }
+
+
+  
+
+   /*
+    different audio plays depending on track you land on?
+   */
+
+   /*
+  
+  direction - moving head left / right
+
+  tiltLR - moving up and down
+  
+   */
+
+   function getTime() { return (new Date()).getTime() / 1000; }
+
+   var scene = new CT.Scene(canvas1);
+   scene.setLight(0, [ 1, 1, 1]);
+   scene.setLight(1, [-1,-1,-1], [.1, .05, 0]);
+   //scene.setStereo(true);
+
+   var root = new CT.Node();
+   root.scale(.2).rotateX(.05);
+
+   scene.add(root);
+
+   // var obj = root.addChild(new CT.Node());
+
+   // obj.addChild(new CT.Cube()       ).setColor(0,1,1).scale(.1,1,.1);
+   // obj.addChild(new CT.Sphere(32,16)).setColor(1,0,0).translate(0,1,0).scale(.3);
+
+   var startTime = getTime();
+
+   var player = root.addChild(new CT.Sphere());
+   player.identity().scale(.2).setColor(.2,.5,.7);
+
+   var playerXPos = 0;
+
+   var SPEED = 1;
+
+   /*
+  rules:
+    3 tracks
+    always needs to be one track to proceed on
+    moving left/right/up
+    hazzards every x amount of time, where x is changeable variable
+
+    - player starts in middle
+    - game choses which way the player moves
+
+
+   */
+   var allPaths = [];
+   function Path(left, right, center) {
+    this.left = left;
+    this.right = right;
+    this.center = center;
+   };
+   
+  function createPath(allPaths){
+    if (allPaths.length === 0){
+      allPaths.push(new Path(0, 0, 1));
+    }
+    else{
+      oldP = allPaths[allPaths.length - 1];
+      var l = Math.floor(Math.random() * 2) ;
+      var r = Math.floor(Math.random() * 2) ;
+      var c;
+      if (!l && !r){
+        c = 1;
+      }
+      else {
+        c = Math.floor(Math.random() * 2);
+      }
+      var newP = new Path(l, r, c);
+      allPaths.push(newP);
+    }
+    
+  }
+
+    // Len should be length of song divided by bpm?
+  var LEN = 5;
+
+  for (var i = 0; i <= LEN; i++){
+    createPath(allPaths);  
+  }
+
+  var blocks = new CT.Node();
+  root.addChild(blocks);
+
+  console.log(allPaths);
+
+
+  var allBlocks = [];
+  var BLOCK_LENGTH = 3;
+  function CreateBlocks(p, number){
+    var node = new CT.Node().identity().translate(0, 0, -number * BLOCK_LENGTH * 3);
+    if (p.left){
+      node.addChild(new CT.Cube().identity().scale(.4, .1, BLOCK_LENGTH).translate(-2.5, -3, 0));
+    }
+    if (p.center){
+      node.addChild(new CT.Cube().identity().scale(.4, .1, BLOCK_LENGTH)).translate(0, -3, 0);
+    }
+    if (p.right){
+      node.addChild(new CT.Cube().identity().scale(.4, .1, BLOCK_LENGTH).translate(2.5, -3, 0));
+    }
+    allBlocks.push(node);
+    blocks.addChild(node);
+  }
+
+  var BLOCK_SPEED = .05;
+  for (var i in allPaths){
+    CreateBlocks(allPaths[i], i);  
+  }
+
+    /*
+    
+      background with perlin noise
+
+
+
+    */
+
+
+   function restart() {
+    setTimeout(update, 50); // -> some sort of delay so that the user has time to readjust
+   }
+
+  function movePlayer (obj, left){
+    var movement = .07;
+    if (left) movement = -movement;
+    obj.translate(movement, 0, 0);
+  }
+  function moveLeft (obj){
+    movePlayer(obj, true);
+  }
+  function moveRight(obj){
+    movePlayer(obj, false);
+  }
+
+
+  function Movement(){
+    this._values = {ud: [0, 0, 0, 0, 0], lr: [0, 0, 0, 0, 0]};
+    this._lr = 'l'; //start left -> could use more logic to figure out when it's the first time
+    this._ud = 'u'; //start up
+    this.getLRDirection = function(){
+      return this._lr;
+    };
+    this.getUDDirection = function(){
+      return this._ud;
+    };
+    /*
+    STRENGTH NEEDS MORE LOGIC -> NEEDS TO NOT CHANGE BASED ON STROKE SIZE ON A REBOUND (otherwise can't switch btw two lanes)
+    - exponential strength? -> solves problem of needing exaggerated beats...
+    */
+    this._strength = { lr : 0, ud : 0};
+    this._addValue = function(type, val){
+      this._values[type].push(val + 360);
+      this._values[type].splice(0, 1);
+      this._calculateDirection(type);
+    }
+    this.addValue = function(lr, ud){
+      this._addValue('lr', lr);
+      this._addValue('ud', ud);
+    }
+    this._calculateDirection = function(type) {
+      var leftCount = 0;
+      var rightCount = 0;
+      for (var i = 0; i < this._values[type].length - 1; i++){
+        var dif = this._values[type][i] - this._values[type][i + 1];
+        this._strength[type] += Math.abs(dif);
+        if (dif > 0){ //numbers are getting smaller (MOVING RIGHT)
+          rightCount++;
+        }
+        else if (dif < 0 ){ //numbers are getting larger (MOVING LEFT)
+          leftCount++;
+        }
+      }
+      if (this._strength[type] >= 500){ 
+        this._strength[type] = 1;
+      }
+      if (type === 'lr'){
+        if (this._lr === 'l' && rightCount >= 3){
+
+          this._lr = 'r';
+          // do whatever happens on a change 
+          playerXPos = -2;
+          player.translate(-this._strength[type]/50, 0, 0);
+          this._strength[type] = 0;
+        }
+        else if (this._lr === 'r' && leftCount >= 3){
+          this._lr = 'l';
+          //do whatever happens on a change
+          playerXPos = 2;
+          player.translate(this._strength[type]/50, 0, 0);
+          this._strength[type] = 0;
+        }
+      }
+      else {
+        // handling imu.tiltLR
+
+      }
+    }
+  }
+
+  var movement = new Movement();
+    
+  (function update() {
+    CT.time = getTime() - startTime;
+    // var c = imu.tiltLR    / 180 * 2; c = (2 - c) % 2 - 1;
+    var c = imu.tiltLR;
+    movement.addValue(imu.direction, c);
+    document.getElementById('test').innerHTML = c;
+    // document.getElementById('test').innerHTML = movement.getLRDirection();
+    
+    /*
+    
+    
+    */
+
+    // obj.identity().rotateZ(-imu.direction * Math.PI / 180);
+    for (var i in allBlocks){
+      var b = allBlocks[i];
+      b.translate(0, 0, BLOCK_SPEED);
+      // remove element after it's passed field of view
+      if (b._matrix[14] > 30){
+        
+        
+        // removed from all blocks
+        allBlocks.splice(i, 1);
+
+        // remove from blocks
+        blocks._children.splice(0, 1);
+        console.log(blocks);
+      }
+    }
+
+    player.translate(0, Math.sin(CT.time * 10) / 9, 0);
+    
+    // if (action){
+    //   moveLeft(player);
+    // }
+    // else if (other action){
+    //   moveRight(player);
+    // }
+
+    /*
+    finding movement
+
+    - rightward is always more negative (smaller numbers)
+    - leftward is greater numbers
+
+    look at last 10 numbers, if acceleration changes from higher numbers to lower numbers then snapped left
+
+   */
+
+  
+
+    root.draw();
+    setTimeout(update, 0);
+  })();
+</script>
+
