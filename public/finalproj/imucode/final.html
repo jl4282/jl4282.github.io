@@ -19,6 +19,82 @@
      });
    }
 
+   var context = new window.webkitAudioContext();
+
+  var audio = new window.webkitAudioContext();
+
+  var scale = {
+    C : 261.63,
+    Eb: 311.13,
+    E : 329.63,
+    F : 349.23,
+    G : 392.00,
+    A : 440.00,
+    Bb: 466.16,
+    B : 493.88,
+    C2: 523.25
+  };
+  var melodies = {
+    m1 : 'GDEFGBbAGBC--',
+    m2 : 'CAGFBC2',
+    m3 : 'BbGECDE',
+    m4 : 'GFCDFG',
+    m5 : 'EDEGGBb',
+    m6 : 'EC2BbBC2C2',
+    m7 : 'BbC2G',
+    m8 : 'BbCB',
+    m9 : 'GFE',
+    m10: 'CFG',
+    m11: 'GABb'
+  };
+
+  function createOsc(melody){
+    var osc = audio.createOscillator();
+    var position = 0;
+    osc.connect(audio.destination);
+    osc.start(0);
+    song = melody
+    play({osc : osc, song: song, position: position});
+  };
+
+  createOsc(melodies.m9);
+  createOsc(melodies.m1);
+
+  // function play(p) {
+  //   var osc = p.osc;
+  //   var song = p.song;
+  //   var position  = p.position;
+  //   var note = song.charAt(position),
+  //       freq = scale[note];
+  //   position += 1;
+  //   if(position >= song.length) {
+  //       osc.stop();
+  //   }
+  //   if(freq) {
+  //       osc.frequency.value = freq;
+  //   }
+  //   if (position < song.length){
+  //     setInterval(play, 1000 / 4 , {osc : osc, song: song, position: position});
+  //   }
+  // }
+
+  function play(p) {
+    
+    var note = p.song.charAt(p.position),
+        freq = scale[note];
+    p.position += 1;
+    if(p.position >= p.song.length) {
+        p.osc.stop();
+    }
+    if(freq) {
+        p.osc.frequency.value = freq;
+        // setInterval(play, 1000 / 4, p);    
+    }
+    if (p.position <= p.song.length){
+      setInterval(play, 1000 / 2.2 , p);
+    }
+    
+  }
 
   
 
@@ -180,11 +256,11 @@
       this._values[type].push(val + 360);
       this._values[type].splice(0, 1);
       this._calculateDirection(type);
-    }
+    };
     this.addValue = function(lr, ud){
       this._addValue('lr', lr);
       this._addValue('ud', ud);
-    }
+    };
     this._calculateDirection = function(type) {
       var leftCount = 0;
       var rightCount = 0;
@@ -222,7 +298,7 @@
         // handling imu.tiltLR
 
       }
-    }
+    };
   }
 
   var movement = new Movement();
@@ -232,8 +308,8 @@
     // var c = imu.tiltLR    / 180 * 2; c = (2 - c) % 2 - 1;
     var c = imu.tiltLR;
     movement.addValue(imu.direction, c);
-    document.getElementById('test').innerHTML = c;
-    // document.getElementById('test').innerHTML = movement.getLRDirection();
+    // document.getElementById('test').innerHTML = c;
+    document.getElementById('test').innerHTML = movement.getLRDirection();
     
     /*
     
@@ -276,6 +352,15 @@
 
    */
 
+/*
+
+ - want 60 fps
+ - get average vector for that set
+- figuring out cardinal direction of vector
+- turning euler into quaternion
+
+
+*/
   
 
     root.draw();
