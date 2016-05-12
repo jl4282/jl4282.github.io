@@ -143,6 +143,10 @@
    bottom_right.identity().scale(.5, .5, .2).translate(3, -1.5, 0);
    var ball = node.addChild(new CT.Sphere());
    ball.identity().scale(.1, .1, .1);
+   var background = root.addChild(new CT.Square());
+   background.identity().scale(4, 4, 1).translate(0, 0, -3);
+   background.setTexture('./landscape.jpg');
+
 
    // var obj = root.addChild(new CT.Node());
 
@@ -349,7 +353,7 @@
   //   direction += 70;
   // }
   function getSector(direction, tilt){
-    var UP = tilt <= 0;
+    var UP = tilt >= 0;
     // var RIGHT = direction >= 0;
     // var RIGHT = (initialDir + direction) % 360;
     var RIGHT = direction <= 180;
@@ -373,16 +377,54 @@
       position = 'BL';
       sectorChain.push(position);
     }
-    document.getElementById('test').innerHTML = 'Direction: ' + direction + ' Sectors: ' + sectorChain;
+    document.getElementById('test').innerHTML = 'tilt: ' + tilt + ' Sectors: ' + sectorChain;
     if (sectorChain.length >= CHAINLEN){
       getSound(sectorChain);
       sectorChain = [];
     }
   }
 
-  function checkSection(s1, s2, m){
+  function checkSection(s1, s2, m, blue, red){
     if (sectorChain[0] === s1 && sectorChain[1] === s2){
       playMelody(m);
+      if (blue && red){
+        if (blue === 'UR'){
+          top_right.setColor(.5, .5, 1, 3);
+        }
+        else if (red === 'UR'){
+          top_right.setColor(1, .5, .5, 3);
+        }
+        else {
+          top_right.setColor(.5, .6, .7, 7);
+        }
+        if (blue === 'UL'){
+          top_left.setColor(.5, .5, 1, 3);
+        }
+        else if (red === 'UL'){
+          top_left.setColor(1, .5, .5, 3);
+        }
+        else {
+          top_left.setColor(.5, .6, .7, 7);
+        }
+        if (blue === 'BL'){
+          bottom_left.setColor(.5, .5, 1, 3);
+        }
+        else if (red === 'BL'){
+          bottom_left.setColor(1, .5, .5, 3);
+        }
+        else {
+          bottom_left.setColor(.5, .6, .7, 7);
+        }
+        if (blue === 'BR'){
+          bottom_right.setColor(.5, .5, 1, 3);
+        }
+        else if (red === 'BR'){
+          bottom_right.setColor(1, .5, .5, 3);
+        }
+        else {
+          bottom_right.setColor(.5, .6, .7, 7);
+        }
+      }
     }
   }
 
@@ -412,22 +454,22 @@ function addSoundstoMovement(){
   var mel = addSoundstoMovement();
 
   function getSound(sectors){
-    checkSection(UR, UR, mel[0]);
-    checkSection(UR, UL, mel[1]);
-    checkSection(UR, BL, mel[2]);
-    checkSection(UR, BR, mel[3]);
-    checkSection(UL, UL, mel[4]);
-    checkSection(UL, UR, mel[5]);
-    checkSection(UL, BR, mel[6]);
-    checkSection(UL, BL, mel[7]);
-    checkSection(BR, BR, mel[8]);
-    checkSection(BR, BL, mel[9]);
-    checkSection(BR, UL, mel[10]);
-    checkSection(BR, UR, mel[11]);
-    checkSection(BL, BR, mel[12]);
-    checkSection(BL, BL, mel[13]);
-    checkSection(BL, UR, mel[14]);
-    checkSection(BL, UL, mel[15]);
+    checkSection(UR, UR, mel[0], UR, UR);
+    checkSection(UR, UL, mel[1], UR, UL);
+    checkSection(UR, BL, mel[2], UR, BL);
+    checkSection(UR, BR, mel[3], UR, BR);
+    checkSection(UL, UL, mel[4], UL, UL);
+    checkSection(UL, UR, mel[5], UL, UR);
+    checkSection(UL, BR, mel[6], UL, BR);
+    checkSection(UL, BL, mel[7], UL, BL);
+    checkSection(BR, BR, mel[8], BR, BR);
+    checkSection(BR, BL, mel[9], BR, BL);
+    checkSection(BR, UL, mel[10],BR, UL);
+    checkSection(BR, UR, mel[11],BR, UR);
+    checkSection(BL, BR, mel[12],BL, BR);
+    checkSection(BL, BL, mel[13],BL, BL);
+    checkSection(BL, UR, mel[14],BL, UR);
+    checkSection(BL, UL, mel[15],BL, UL);
   }
 
   // var movement = new Movement();
@@ -437,7 +479,7 @@ function addSoundstoMovement(){
     // var c = imu.tiltLR    / 180 * 2; c = (2 - c) % 2 - 1;
     // var c = imu.tiltLR;
     var c = imu.tiltLR    / 180 * 2; c = (2 - c) % 2 - 1;
-    root.rotateY(Math.cos(CT.time) / 400);
+    node.rotateY(Math.cos(CT.time) / 400);
     var dir = imu.direction / 180 - 1;
 
     // movement.addValue(imu.direction, c);
