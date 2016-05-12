@@ -18,7 +18,7 @@
 
 
 */
-
+  
    var imu = { direction:0, tiltFB:0, tiltLR:0 }; // IF BROWSER SUPPORTS PHONE
    if (window.DeviceOrientationEvent) {           // ORIENTATION, ADD LISTENER.
      window.addEventListener( 'deviceorientation', function(event) {
@@ -27,9 +27,11 @@
         imu.tiltLR    = event.gamma;              // TILT LEFT-RIGHT IN DEGREES
      });
    }
+   var initialDir = imu.direction;
    var context = new window.webkitAudioContext();
 
   var audio = new window.webkitAudioContext();
+
 
   var scale = {
     C : 261.63,
@@ -123,12 +125,26 @@
    var scene = new CT.Scene(canvas1);
    scene.setLight(0, [ 1, 1, 1]);
    scene.setLight(1, [-1,-1,-1], [.1, .05, 0]);
-   //scene.setStereo(true);
+   scene.setStereo(true);
 
    var root = new CT.Node();
    root.scale(.2).rotateX(.05);
 
    scene.add(root);
+
+   var node = root.addChild(new CT.Node());
+   node.identity();
+
+   var top_left = node.addChild(new CT.Square());
+   top_left.identity().scale(.5, .5, 1).translate(-3, 1.5, 0);
+   var top_right = node.addChild(new CT.Square());
+   top_right.identity().scale(.5, .5, 1).translate(3, 1.5, 0);
+   var bottom_left = node.addChild(new CT.Square());
+   bottom_left.identity().scale(.5, .5, 1).translate(-3, -1.5, 0);
+   var bottom_right = node.addChild(new CT.Square());
+   bottom_right.identity().scale(.5, .5, 1).translate(3, -1.5, 0);
+   var ball = node.addChild(new CT.Sphere());
+   ball.identity().scale(.3, .3, .3);
 
    // var obj = root.addChild(new CT.Node());
 
@@ -137,12 +153,12 @@
 
    var startTime = getTime();
 
-   var player = root.addChild(new CT.Sphere());
-   player.identity().scale(.2).setColor(.2,.5,.7);
+   // var player = root.addChild(new CT.Sphere());
+   // player.identity().scale(.2).setColor(.2,.5,.7);
 
-   var playerXPos = 0;
+   // var playerXPos = 0;
 
-   var SPEED = 1;
+   // var SPEED = 1;
 
    /*
   rules:
@@ -156,119 +172,119 @@
 
 
    */
-   var allPaths = [];
-   function Path(left, right, center) {
-    this.left = left;
-    this.right = right;
-    this.center = center;
-   };
+  //  var allPaths = [];
+  //  function Path(left, right, center) {
+  //   this.left = left;
+  //   this.right = right;
+  //   this.center = center;
+  //  };
    
-  function createPath(allPaths){
-    if (allPaths.length === 0){
-      allPaths.push(new Path(0, 0, 1));
-    }
-    else{
-      oldP = allPaths[allPaths.length - 1];
-      var l = Math.floor(Math.random() * 2) ;
-      var r = Math.floor(Math.random() * 2) ;
-      var c;
-      if (!l && !r){
-        c = 1;
-      }
-      else {
-        c = Math.floor(Math.random() * 2);
-      }
-      var newP = new Path(l, r, c);
-      allPaths.push(newP);
-    }
+  // function createPath(allPaths){
+  //   if (allPaths.length === 0){
+  //     allPaths.push(new Path(0, 0, 1));
+  //   }
+  //   else{
+  //     oldP = allPaths[allPaths.length - 1];
+  //     var l = Math.floor(Math.random() * 2) ;
+  //     var r = Math.floor(Math.random() * 2) ;
+  //     var c;
+  //     if (!l && !r){
+  //       c = 1;
+  //     }
+  //     else {
+  //       c = Math.floor(Math.random() * 2);
+  //     }
+  //     var newP = new Path(l, r, c);
+  //     allPaths.push(newP);
+  //   }
     
-  }
+  // }
 
     // Len should be length of song divided by bpm?
-  var LEN = 5;
+  // var LEN = 5;
 
-  for (var i = 0; i <= LEN; i++){
-    createPath(allPaths);  
-  }
+  // for (var i = 0; i <= LEN; i++){
+  //   createPath(allPaths);  
+  // }
 
-  var blocks = new CT.Node();
-  root.addChild(blocks);
+  // var blocks = new CT.Node();
+  // root.addChild(blocks);
 
-  console.log(allPaths);
+  // console.log(allPaths);
 
 
-  var allBlocks = [];
-  var BLOCK_LENGTH = 3;
-  function CreateBlocks(p, number){
-    var node = new CT.Node().identity().translate(0, 0, -number * BLOCK_LENGTH * 3);
-    if (p.left){
-      node.addChild(new CT.Cube().identity().scale(.4, .1, BLOCK_LENGTH).translate(-2.5, -3, 0));
-    }
-    if (p.center){
-      node.addChild(new CT.Cube().identity().scale(.4, .1, BLOCK_LENGTH)).translate(0, -3, 0);
-    }
-    if (p.right){
-      node.addChild(new CT.Cube().identity().scale(.4, .1, BLOCK_LENGTH).translate(2.5, -3, 0));
-    }
-    allBlocks.push(node);
-    blocks.addChild(node);
-  }
+  // var allBlocks = [];
+  // var BLOCK_LENGTH = 3;
+  // function CreateBlocks(p, number){
+  //   var node = new CT.Node().identity().translate(0, 0, -number * BLOCK_LENGTH * 3);
+  //   if (p.left){
+  //     node.addChild(new CT.Cube().identity().scale(.4, .1, BLOCK_LENGTH).translate(-2.5, -3, 0));
+  //   }
+  //   if (p.center){
+  //     node.addChild(new CT.Cube().identity().scale(.4, .1, BLOCK_LENGTH)).translate(0, -3, 0);
+  //   }
+  //   if (p.right){
+  //     node.addChild(new CT.Cube().identity().scale(.4, .1, BLOCK_LENGTH).translate(2.5, -3, 0));
+  //   }
+  //   allBlocks.push(node);
+  //   blocks.addChild(node);
+  // }
 
-  var BLOCK_SPEED = .05;
-  for (var i in allPaths){
-    CreateBlocks(allPaths[i], i);  
-  }
+  // var BLOCK_SPEED = .05;
+  // for (var i in allPaths){
+  //   CreateBlocks(allPaths[i], i);  
+  // }
 
-    /*
+  //   /*
     
-      background with perlin noise
+  //     background with perlin noise
 
 
 
-    */
+  //   */
 
 
-   function restart() {
-    setTimeout(update, 50); // -> some sort of delay so that the user has time to readjust
-   }
+  //  function restart() {
+  //   setTimeout(update, 50); // -> some sort of delay so that the user has time to readjust
+  //  }
 
-  function movePlayer (obj, left){
-    var movement = .07;
-    if (left) movement = -movement;
-    obj.translate(movement, 0, 0);
-  }
-  function moveLeft (obj){
-    movePlayer(obj, true);
-  }
-  function moveRight(obj){
-    movePlayer(obj, false);
-  }
+  // function movePlayer (obj, left){
+  //   var movement = .07;
+  //   if (left) movement = -movement;
+  //   obj.translate(movement, 0, 0);
+  // }
+  // function moveLeft (obj){
+  //   movePlayer(obj, true);
+  // }
+  // function moveRight(obj){
+  //   movePlayer(obj, false);
+  // }
 
 
-  function Movement(){
-    this._values = {ud: [0, 0, 0, 0, 0], lr: [0, 0, 0, 0, 0]};
-    this._lr = 'l'; //start left -> could use more logic to figure out when it's the first time
-    this._ud = 'u'; //start up
-    this.getLRDirection = function(){
-      return this._lr;
-    };
-    this.getUDDirection = function(){
-      return this._ud;
-    };
-    /*
-    STRENGTH NEEDS MORE LOGIC -> NEEDS TO NOT CHANGE BASED ON STROKE SIZE ON A REBOUND (otherwise can't switch btw two lanes)
-    - exponential strength? -> solves problem of needing exaggerated beats...
-    */
-    this._strength = { lr : 0, ud : 0};
-    // this._addValue = function(type, val){
-    //   this._values[type].push(val + 360);
-    //   this._values[type].splice(0, 1);
-    //   this._calculateDirection(type);
-    // };
-    this.addValue = function(lr, ud){
-      this._addValue('lr', lr);
-      this._addValue('ud', ud);
-    };
+  // function Movement(){
+  //   this._values = {ud: [0, 0, 0, 0, 0], lr: [0, 0, 0, 0, 0]};
+  //   this._lr = 'l'; //start left -> could use more logic to figure out when it's the first time
+  //   this._ud = 'u'; //start up
+  //   this.getLRDirection = function(){
+  //     return this._lr;
+  //   };
+  //   this.getUDDirection = function(){
+  //     return this._ud;
+  //   };
+  //   /*
+  //   STRENGTH NEEDS MORE LOGIC -> NEEDS TO NOT CHANGE BASED ON STROKE SIZE ON A REBOUND (otherwise can't switch btw two lanes)
+  //   - exponential strength? -> solves problem of needing exaggerated beats...
+  //   */
+  //   this._strength = { lr : 0, ud : 0};
+  //   // this._addValue = function(type, val){
+  //   //   this._values[type].push(val + 360);
+  //   //   this._values[type].splice(0, 1);
+  //   //   this._calculateDirection(type);
+  //   // };
+  //   this.addValue = function(lr, ud){
+  //     this._addValue('lr', lr);
+  //     this._addValue('ud', ud);
+  //   };
     // this._calculateDirection = function(type) {
     //   var leftCount = 0;
     //   var rightCount = 0;
@@ -307,12 +323,12 @@
 
     //   }
     // };
-  }
+  // }
 
   var frames = 0;
   var directionSum = 0;
   var tiltLRSum = 0;
-  var SAMPLE = 55;
+  var SAMPLE = 53;
   function calculateDirection(direction, tiltLR){
     frames += 1;
     directionSum += direction;
@@ -331,8 +347,9 @@
   var sectorChain = [];
   var CHAINLEN = 2;
   function getSector(direction, tilt){
-    var UP = tilt >= 0;
+    var UP = tilt <= 0;
     var RIGHT = direction < 310;
+    // var RIGHT = (initialDir + direction) % 360;
     if (UP){
       RIGHT = direction < 110;
     }
@@ -385,37 +402,25 @@
     checkSection(BR, UL, melodies.m11);
     checkSection(BR, UR, melodies.m4);
     checkSection(BL, BR, melodies.m5);
-    checkSection(BL, BL, melodies.m9);
-    checkSection(BL, UR, melodies.m10);
+    checkSection(BL, BL, melodies.m2);
+    checkSection(BL, UR, melodies.m1);
     checkSection(BL, UL, melodies.m5);
-    
-    
-    // if (sectors[0] === 'UR' && sectors[1] === 'UR'){
-    //   playMelody(melodies.m1);
-    // }
-    // else if (sectors[0] === 'UL' && sectors[1] === 'UR'){
-    //   playMelody(melodies.m2);
-    // }
-    // else if (sectors[0] === 'UR' && sectors[1] === 'UL'){
-    //   playMelody(melodies.m3);
-    // }
-    // else if (sectors[0] === 'BR' && sectors[1] === 'BL'){
-    //   playMelody(melodies.m4);
-    // }
-    // else if (sectors[0] === 'BL' && sectors[1] === 'BL'){
-    //   playMelody(melodies.m5);
-    // }
-    // else if (sectors[0] === 'BR' && sectors[1] === 'BR'){
-    //   playMelody(melodies.m5);
-    // }
   }
 
-  var movement = new Movement();
+  function visuals(){
+
+  }
+
+  // var movement = new Movement();
     
   (function update() {
     CT.time = getTime() - startTime;
     // var c = imu.tiltLR    / 180 * 2; c = (2 - c) % 2 - 1;
-    var c = imu.tiltLR;
+    // var c = imu.tiltLR;
+    var c = imu.tiltLR    / 180 * 2; c = (2 - c) % 2 - 1;
+    root.rotateY(Math.cos(CT.time) / 500);
+    var dir = imu.direction / 180 - 1;
+
     // movement.addValue(imu.direction, c);
 
     // document.getElementById('test').innerHTML = c;
@@ -426,26 +431,58 @@
     
     */
 
+    ball.setColor(Math.abs(c) / 200, .001 * Math.abs(imu.direction), .4, 3);
+    // ball.translate((imu.direction - 310) / 1000, imu.tiltLR / 1000 , 0);
+
+    var ballY = 0;
+    if (c < 0) {
+      ballY = c / -70;
+    }
+    else {
+      ballY = c / -70;
+    }
+
+    ball.identity().translate(dir, c, 0);
+    // if (ball._matrix[13] > 1){
+    //   ball._matrix[13] = 1;
+    // }
+    // if (ball._matrix[13] < -1){
+    //   ball._matrix[13] = -1; 
+    // }
+    // // if (ball._matrix[14] >= 1){
+    // //   ball._matrix[14] = 1;
+    // // }
+    // // if (ball._matrix[14] <= -1){
+    // //   ball._matrix[14] = -1; 
+    // // }
+    // if (ball._matrix[12] > 1){
+    //   ball._matrix[12] = 1;
+    // }
+    // if (ball._matrix[12] < -1){
+    //   ball._matrix[12] = -1; 
+    // }
+    document.getElementById('test').innerHTML = dir;
+
     calculateDirection(imu.direction, imu.tiltLR);
 
     // obj.identity().rotateZ(-imu.direction * Math.PI / 180);
-    for (var i in allBlocks){
-      var b = allBlocks[i];
-      b.translate(0, 0, BLOCK_SPEED);
-      // remove element after it's passed field of view
-      if (b._matrix[14] > 30){
+    // for (var i in allBlocks){
+    //   var b = allBlocks[i];
+    //   b.translate(0, 0, BLOCK_SPEED);
+    //   // remove element after it's passed field of view
+    //   if (b._matrix[14] > 30){
         
         
-        // removed from all blocks
-        allBlocks.splice(i, 1);
+    //     // removed from all blocks
+    //     allBlocks.splice(i, 1);
 
-        // remove from blocks
-        blocks._children.splice(0, 1);
-        console.log(blocks);
-      }
-    }
+    //     // remove from blocks
+    //     blocks._children.splice(0, 1);
+    //     console.log(blocks);
+    //   }
+    // }
 
-    player.translate(0, Math.sin(CT.time * 10) / 9, 0);
+    // player.translate(0, Math.sin(CT.time * 10) / 9, 0);
     
     // if (action){
     //   moveLeft(player);
