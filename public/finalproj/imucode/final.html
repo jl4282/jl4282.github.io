@@ -377,7 +377,7 @@
       position = 'BL';
       sectorChain.push(position);
     }
-    document.getElementById('test').innerHTML = 'tilt: ' + tilt + ' Sectors: ' + sectorChain;
+    document.getElementById('test').innerHTML = 'Direction: ' + direction + ' Sectors: ' + sectorChain;
     if (sectorChain.length >= CHAINLEN){
       getSound(sectorChain);
       sectorChain = [];
