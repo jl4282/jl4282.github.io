@@ -27,7 +27,7 @@
         imu.tiltLR    = event.gamma;              // TILT LEFT-RIGHT IN DEGREES
      });
    }
-   var initialDir = imu.direction;
+   // var initialDir = imu.direction;
    var context = new window.webkitAudioContext();
 
   var audio = new window.webkitAudioContext();
@@ -135,14 +135,14 @@
    var node = root.addChild(new CT.Node());
    node.identity();
 
-   var top_left = node.addChild(new CT.Square());
-   top_left.identity().scale(.5, .5, 1).translate(-3, 1.5, 0);
-   var top_right = node.addChild(new CT.Square());
-   top_right.identity().scale(.5, .5, 1).translate(3, 1.5, 0);
-   var bottom_left = node.addChild(new CT.Square());
-   bottom_left.identity().scale(.5, .5, 1).translate(-3, -1.5, 0);
-   var bottom_right = node.addChild(new CT.Square());
-   bottom_right.identity().scale(.5, .5, 1).translate(3, -1.5, 0);
+   var top_left = node.addChild(new CT.Cube());
+   top_left.identity().scale(.5, .5, .2).translate(-3, 1.5, 0);
+   var top_right = node.addChild(new CT.Cube());
+   top_right.identity().scale(.5, .5, .2).translate(3, 1.5, 0);
+   var bottom_left = node.addChild(new CT.Cube());
+   bottom_left.identity().scale(.5, .5, .2).translate(-3, -1.5, 0);
+   var bottom_right = node.addChild(new CT.Cube());
+   bottom_right.identity().scale(.5, .5, .2).translate(3, -1.5, 0);
    var ball = node.addChild(new CT.Sphere());
    ball.identity().scale(.3, .3, .3);
 
@@ -346,9 +346,13 @@
   }
   var sectorChain = [];
   var CHAINLEN = 2;
+  // var WRAP = 360;
+  // if (initialDir + 70 > WRAP){
+  //   direction += 70;
+  // }
   function getSector(direction, tilt){
     var UP = tilt <= 0;
-    var RIGHT = direction < 310;
+    var RIGHT = direction > 180;
     // var RIGHT = (initialDir + direction) % 360;
     if (UP){
       RIGHT = direction < 110;
@@ -418,7 +422,7 @@
     // var c = imu.tiltLR    / 180 * 2; c = (2 - c) % 2 - 1;
     // var c = imu.tiltLR;
     var c = imu.tiltLR    / 180 * 2; c = (2 - c) % 2 - 1;
-    root.rotateY(Math.cos(CT.time) / 500);
+    root.rotateY(Math.cos(CT.time) / 400);
     var dir = imu.direction / 180 - 1;
 
     // movement.addValue(imu.direction, c);
@@ -431,18 +435,10 @@
     
     */
 
-    ball.setColor(Math.abs(c) / 200, .001 * Math.abs(imu.direction), .4, 3);
+    ball.setColor(Math.abs(dir), Math.abs(c), .4, 3);
     // ball.translate((imu.direction - 310) / 1000, imu.tiltLR / 1000 , 0);
 
-    var ballY = 0;
-    if (c < 0) {
-      ballY = c / -70;
-    }
-    else {
-      ballY = c / -70;
-    }
-
-    ball.identity().translate(dir, c, 0);
+    ball.identity().translate(-dir, c, 0);
     // if (ball._matrix[13] > 1){
     //   ball._matrix[13] = 1;
     // }
@@ -461,7 +457,7 @@
     // if (ball._matrix[12] < -1){
     //   ball._matrix[12] = -1; 
     // }
-    document.getElementById('test').innerHTML = dir;
+    // document.getElementById('test').innerHTML = dir;
 
     calculateDirection(imu.direction, imu.tiltLR);
 
