@@ -44,19 +44,20 @@
     B : 493.88,
     C2: 523.25
   };
-  var melodies = {
-    m1 : 'GDEFGBbAGBC--',
-    m2 : 'CAGFBC2',
-    m3 : 'BbGECDE',
-    m4 : 'GFCDFG',
-    m5 : 'EDEGGBb',
-    m6 : 'EC2BbBC2C2',
-    m7 : 'BbC2G',
-    m8 : 'BbCB',
-    m9 : 'GFE',
-    m10: 'CFG',
-    m11: 'GABb'
-  };
+  var melodies = [
+    'GDEFGBbAGBC--',
+    'CAGFBC2',
+    'BbGECDE',
+    'GFCDFG',
+    'EDEGGBb',
+    'EC2BbBC2C2',
+    'BbC2G',
+    'BbCB',
+    'GFE',
+    'CFG',
+    'GABb'
+  ];
+  console.log(melodies);
 
   function playMelody(melody){
     var osc = audio.createOscillator();
@@ -67,8 +68,8 @@
     play({osc : osc, song: song, position: position});
   };
 
-  playMelody(melodies.m9);
-  playMelody(melodies.m3);
+  playMelody(melodies[8]);
+  playMelody(melodies[2]);
 
   // function play(p) {
   //   var osc = p.osc;
@@ -89,7 +90,6 @@
   // }
 
   function play(p) {
-    
     var note = p.song.charAt(p.position),
         freq = scale[note];
     p.position += 1;
@@ -105,8 +105,6 @@
     }
     
   }
-
-  
 
    /*
     different audio plays depending on track you land on?
@@ -144,7 +142,7 @@
    var bottom_right = node.addChild(new CT.Cube());
    bottom_right.identity().scale(.5, .5, .2).translate(3, -1.5, 0);
    var ball = node.addChild(new CT.Sphere());
-   ball.identity().scale(.3, .3, .3);
+   ball.identity().scale(.1, .1, .1);
 
    // var obj = root.addChild(new CT.Node());
 
@@ -352,11 +350,12 @@
   // }
   function getSector(direction, tilt){
     var UP = tilt <= 0;
-    var RIGHT = direction > 180;
+    // var RIGHT = direction >= 0;
     // var RIGHT = (initialDir + direction) % 360;
-    if (UP){
-      RIGHT = direction < 110;
-    }
+    var RIGHT = direction <= 180;
+    // if (UP){
+    //   RIGHT = direction < 110;
+    // }
     var position = 'OO';
     if ( UP && RIGHT){ // looking up AND right
       position = 'UR';
@@ -374,7 +373,7 @@
       position = 'BL';
       sectorChain.push(position);
     }
-    document.getElementById('test').innerHTML = sectorChain;
+    document.getElementById('test').innerHTML = 'Direction: ' + direction + ' Sectors: ' + sectorChain;
     if (sectorChain.length >= CHAINLEN){
       getSound(sectorChain);
       sectorChain = [];
@@ -392,27 +391,43 @@
       BR = 'BR',
       BL = 'BL';
 
-  function getSound(sectors){
-    checkSection(UR, UR, melodies.m1);
-    checkSection(UR, UL, melodies.m2);
-    checkSection(UR, BL, melodies.m3);
-    checkSection(UR, BR, melodies.m4);
-    checkSection(UL, UL, melodies.m5);
-    checkSection(UL, UR, melodies.m6);
-    checkSection(UL, BR, melodies.m7);
-    checkSection(UL, BL, melodies.m8);
-    checkSection(BR, BR, melodies.m9);
-    checkSection(BR, BL, melodies.m10);
-    checkSection(BR, UL, melodies.m11);
-    checkSection(BR, UR, melodies.m4);
-    checkSection(BL, BR, melodies.m5);
-    checkSection(BL, BL, melodies.m2);
-    checkSection(BL, UR, melodies.m1);
-    checkSection(BL, UL, melodies.m5);
+
+
+// randomize which melody is assiciated with which movement
+function addSoundstoMovement(){
+  var dup = melodies.slice();
+  var m = [];
+  for (var i = dup.length; i > 0; i--){
+    var j = Math.floor(Math.random()*dup.length);
+    m.push(dup[j]);
+    dup.splice(j, 1);
   }
+  for (var i = 0; i < 5; i++){
+    // m.push(melodies.slice(Math.floor(Math.random()*melodies.length), 1));
+    var j = Math.floor(Math.random()*melodies.length);
+    m.push(melodies[j]);
+  }
+  return m;
+}
+  var mel = addSoundstoMovement();
 
-  function visuals(){
-
+  function getSound(sectors){
+    checkSection(UR, UR, mel[0]);
+    checkSection(UR, UL, mel[1]);
+    checkSection(UR, BL, mel[2]);
+    checkSection(UR, BR, mel[3]);
+    checkSection(UL, UL, mel[4]);
+    checkSection(UL, UR, mel[5]);
+    checkSection(UL, BR, mel[6]);
+    checkSection(UL, BL, mel[7]);
+    checkSection(BR, BR, mel[8]);
+    checkSection(BR, BL, mel[9]);
+    checkSection(BR, UL, mel[10]);
+    checkSection(BR, UR, mel[11]);
+    checkSection(BL, BR, mel[12]);
+    checkSection(BL, BL, mel[13]);
+    checkSection(BL, UR, mel[14]);
+    checkSection(BL, UL, mel[15]);
   }
 
   // var movement = new Movement();
@@ -429,16 +444,12 @@
 
     // document.getElementById('test').innerHTML = c;
     // document.getElementById('test').innerHTML = movement.getLRDirection();
-    // document.getElementById('test').innerHTML = imu.direction;
-    /*
-    
-    
-    */
+    // document.getElementById('test').innerHTML = 'Direction: ' + imu.direction;
 
     ball.setColor(Math.abs(dir), Math.abs(c), .4, 3);
     // ball.translate((imu.direction - 310) / 1000, imu.tiltLR / 1000 , 0);
 
-    ball.identity().translate(-dir, c, 0);
+    ball.identity().scale(.3, .3, .3).translate((imu.direction > 180 ? (imu.direction - 180) / -180 : imu.direction / 180)  * 2 , c, 0);
     // if (ball._matrix[13] > 1){
     //   ball._matrix[13] = 1;
     // }
@@ -459,7 +470,7 @@
     // }
     // document.getElementById('test').innerHTML = dir;
 
-    calculateDirection(imu.direction, imu.tiltLR);
+    calculateDirection(imu.direction, c);
 
     // obj.identity().rotateZ(-imu.direction * Math.PI / 180);
     // for (var i in allBlocks){
